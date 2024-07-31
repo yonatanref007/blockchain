@@ -1,0 +1,38 @@
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+.filter-bar {
+    width: 250px; 
+    background-color: #f4f4f4; 
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); 
+    
+}
+
+.itemList {
+    flex: 1;
+    display: flex;
+}
+
+.Price{
+    border: 1px solid black;
+}
+
+.Submit{
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;  
+}
+.Submit:hover{
+    background-color: #634caf;
+
+}
+
