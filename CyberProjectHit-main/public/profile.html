@@ -66,7 +66,7 @@
                 <h2 class="title">Public Profile</h2>
                 <!-- Profile picture -->
                 <div class="flex justify-center mb-4">
-                    <img src=".\main_css\main_body_css\img\default_profile.png" alt="Profile Picture" class="w-32 h-32 rounded-full shadow-md">
+                    <img src=".\main_css\main_body_css\img\default_profile.png" alt="Profile" class="w-32 h-32 rounded-full shadow-md">
                 </div>
                 <!-- User info -->
                 <div class="space-y-4">
@@ -90,6 +90,9 @@
                 <!-- My courses button -->
                 <div class="Profile button">
                   <button onclick="gotoMyCourses()" value="View Courses">View Courses</button>
+                </div>
+                <div class="Profile button">
+                  <button onclick="gotoUpload()" value="upload Vidoes">Upload File</button>
                 </div>
             </section>
             <br>
@@ -117,6 +120,9 @@
     }
     function gotoMyCourses() {
             window.location.href = "courses";
+    }  
+    function gotoUpload() {
+            window.location.href = "upload_videos.html";
     }  
 </script>
 
