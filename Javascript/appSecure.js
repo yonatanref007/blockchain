@@ -7,6 +7,9 @@ const { Client } = require('pg');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const util = require('util')
+const unlinkFile = util.promisify(fs.unlink)
+const multer = require("multer")
 
 // Loading configuration file
 const config = JSON.parse(fs.readFileSync('config.json'));
@@ -36,6 +39,7 @@ app.use(session({
 // Set up view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'public'));
 
 // Start the server
 const port = 3002; // or any port of your choice
@@ -65,18 +69,22 @@ app.get('/index', async (req, res) => {
 });
 
 
+// Load dictionarty file
+const dictionary = fs.readFileSync(config.password.dictionaryPath,'utf8').split('\n');
 // Helper function to check password complexity
 function isPasswordComplex(password) {
-    const { minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecialCharacters } = config.password;
+    const { minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecialCharacters, requireDictionaryProtection } = config.password;
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const existInDictionary = !dictionary.includes(password);
 
     return password.length >= minLength &&
            (!requireUppercase || hasUppercase) &&
            (!requireLowercase || hasLowercase) &&
            (!requireNumbers || hasNumbers) &&
+           (!requireDictionaryProtection || existInDictionary) &&
            (!requireSpecialCharacters || hasSpecial);
 }
 
@@ -112,7 +120,7 @@ app.post('/login', async (req, res) => {
 
         req.session.username = username;
         req.session.loggedIn = true;
-        res.redirect('/main');
+        res.redirect('/reg_main');
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).send('Error logging in');
@@ -326,5 +334,52 @@ app.post('/changePassword', async (req, res) => {
 // End of Change Password
 
 
+// upload videos
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/upload_vid_files/uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2000000 }, // 2 MB limit
+    fileFilter: function(req, file, cb) {
+        checkFileType(file, cb);
+    }
+}).any();
 
+function checkFileType(file, cb) {
+    // Check file extension and mimetype
+    const fileType = /mp4$/i;
+    const extname = fileType.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileType.test(file.mimetype);
+    
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb("Please upload an MP4 file only.");
+    }
+}
+
+app.get('/videos', async (req, res) => {
+    res.render('upload_videos');
+});
+
+app.post("/videos", async (req, res) => {
+    upload(req, res, (err) => {
+        if (!err && req.files && req.files.length > 0) {
+            res.status(200).send();
+        } else if (!err && (!req.files || req.files.length === 0)) {
+            res.statusMessage = "Please select a video to upload.";
+            res.status(400).end();
+        } else {
+            res.statusMessage = (err === "Please upload an MP4 file only.") ? err : "Video exceeds the limit of 2 MB.";
+            res.status(400).end();
+        }
+    });
+});

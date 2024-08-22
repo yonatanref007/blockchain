@@ -5,6 +5,7 @@
         "requireLowercase": true,
         "requireNumbers": true,
         "requireSpecialCharacters": true,
-        "maxLoginAttempts": 3
+        "maxLoginAttempts": 3,
+        "dictionaryPath": "./dictionary1.txt"
     }
 }
