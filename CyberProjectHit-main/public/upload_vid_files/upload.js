@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // Handle file selection
     input.addEventListener("change", function() {
         const files = input.files;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type.startsWith("video/")) { // Ensure it's a video
-                queuedVideosArray.push(files[i]);
+        for (const element of files) {
+            if (element.type.startsWith("video/")) { // Ensure it's a video
+                queuedVideosArray.push(element);
             }
         }
         queuedForm.reset();
@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", function() {
     inputDiv.addEventListener("drop", function(e) {
         e.preventDefault();
         const files = e.dataTransfer.files;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type.startsWith("video/")) { // Ensure it's a video
-                if (queuedVideosArray.every(video => video.name !== files[i].name)) {
-                    queuedVideosArray.push(files[i]);
+        for (const element of files) {
+            if (element.type.startsWith("video/")) { // Ensure it's a video
+                if (queuedVideosArray.every(video => video.name !== element.name)) {
+                    queuedVideosArray.push(element);
                 }
             }
         }
