@@ -10,7 +10,10 @@ function checkLoginStatus() {
     .then(response => response.json())
     .then(data => {
         if (!data.loggedIn) {
-            window.location.href = 'error.html';
+            window.location.href = 'main.html';
+        }
+        else{
+            window.location.href = 'reg_main.html';
         }
     })
     .catch(error => {

@@ -6,6 +6,7 @@
         "requireNumbers": true,
         "requireSpecialCharacters": true,
         "maxLoginAttempts": 3,
-        "dictionaryPath": "./dictionary1.txt"
+        "dictionaryPath": "./dictionary1.txt",
+        "historyLimit": 3
     }
 }

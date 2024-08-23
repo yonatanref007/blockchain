@@ -166,6 +166,9 @@ app.post('/register', async (req, res) => {
                        VALUES ($1, $2, $3, $4, $5, $6)`;
         await db.query(query, [username, firstname, lastname, email, hash, salt]);
 
+        const passwordHistory = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
+        await db.query(passwordHistory, [username, hash]);
+
         res.redirect('/main');
     } catch (error) {
         console.error('Error registering user:', error);
@@ -252,19 +255,39 @@ app.post('/resetPassword', async (req, res) => {
         }
 
         const hash = crypto.createHash('sha1').update(token).digest('hex');
-        const result = await db.query("SELECT username, reset_token_expiry FROM users WHERE reset_token = $1", [hash]);
+        const result = await db.query("SELECT username, reset_token_expiry, salt FROM users WHERE reset_token = $1", [hash]);
 
         if (result.rows.length === 0) {
             return res.status(400).send('Invalid or expired token');
         }
 
-        const { username, reset_token_expiry } = result.rows[0];
+        const { username, reset_token_expiry, salt } = result.rows[0];
 
         //Extire token page
         if (reset_token_expiry < new Date()) {
             return res.sendFile(path.join(__dirname, 'public', 'error.html'));
             //return res.sendFile(path.join(__dirname, 'public', 'error.html'));
         }
+
+        // start of Password history
+        const Passwords = await db.query("SELECT id, password FROM passwordhistory WHERE username = $1 ORDER BY id ASC", [username]);
+        const newHash = crypto.createHmac('sha256', salt).update(newPassword).digest('hex');
+
+        const { historyLimit } = config.password;
+
+        const previousPasswords = Passwords.rows.map(row => row.password);
+        if (previousPasswords.includes(newHash)){
+            return res.status(400).send('Cant use password you recently used');
+        }
+
+        if(Passwords.rows.length === historyLimit){
+            const passwordId = Passwords.rows[0].id;
+            await db.query("DELETE FROM passwordhistory WHERE id = $1", [passwordId]);
+        }
+
+        const query = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
+        await db.query(query, [username, newHash]);
+        // end of Password history
 
         await db.query("UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE username = $2", [newPassword, username]);
 
@@ -304,9 +327,9 @@ app.post('/changePassword', async (req, res) => {
     }
     const { currentPassword, newPassword } = req.body;
     const username = req.session.username;
-
+    
     try {
-        const result = await db.query("SELECT password, salt FROM users WHERE username = $1", [username]);
+        const result = await db.query("SELECT  password, salt FROM users WHERE username = $1 ", [username]);
         if (result.rows.length === 0) {
             return res.status(400).send('User not found');
         }
@@ -323,15 +346,39 @@ app.post('/changePassword', async (req, res) => {
             return res.status(400).send('New password does not meet complexity requirements');
         }
 
-        await db.query("UPDATE users SET password = $1 WHERE username = $2", [newHash, username]);
+        // start of Password history
+        const Passwords = await db.query("SELECT id, password FROM passwordhistory WHERE username = $1 ORDER BY id ASC", [username]);
+        const newHash = crypto.createHmac('sha256', salt).update(newPassword).digest('hex');
 
+        const { historyLimit } = config.password;
+
+        const previousPasswords = Passwords.rows.map(row => row.password);
+        if (previousPasswords.includes(newHash)){
+            return res.status(400).send('Cant use password you recently used');
+        }
+
+        if(Passwords.rows.length === historyLimit){
+            const passwordId = Passwords.rows[0].id;
+            await db.query("DELETE FROM passwordhistory WHERE id = $1", [passwordId]);
+        }
+
+        const query = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
+        await db.query(query, [username, newHash]);
+        // end of Password history
+
+        await db.query("UPDATE users SET password = $1 WHERE username = $2", [newHash, username]);
         res.status(200).send('Password changed successfully');
     } catch (error) {
         console.error('Error changing password:', error);
         res.status(500).send('Error changing password');
     }
 });
+
 // End of Change Password
+
+
+
+
 
 
 // upload videos

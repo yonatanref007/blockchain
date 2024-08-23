@@ -31,3 +31,9 @@ CREATE TABLE item_pictures (
     picture_url TEXT,
     FOREIGN KEY (item_id) REFERENCES items(id)
 );
+
+CREATE TABLE passwordhistory (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+);
