@@ -38,7 +38,6 @@ app.use(session({
 
 // Set up view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 app.set('views', path.join(__dirname, 'public'));
 
 // Start the server
@@ -109,7 +108,7 @@ app.post('/login', async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(401).send('Invalid username or password');
         }
-
+        
         const dbPassword = result.rows[0].password;
         const salt = result.rows[0].salt;
         const hash = crypto.createHmac('sha256', salt).update(password).digest('hex');
@@ -117,10 +116,10 @@ app.post('/login', async (req, res) => {
         if (hash !== dbPassword) {
             return res.status(401).send('Invalid username or password');
         }
-
         req.session.username = username;
         req.session.loggedIn = true;
-        res.redirect('/reg_main');
+        req.session.email = result.rows[0].email;
+        res.status(200).send('');
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).send('Error logging in');
@@ -168,8 +167,8 @@ app.post('/register', async (req, res) => {
 
         const passwordHistory = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
         await db.query(passwordHistory, [username, hash]);
-
-        res.redirect('/main');
+        
+        res.status(200).send('');
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).send('Error registering user');
@@ -301,11 +300,14 @@ app.post('/resetPassword', async (req, res) => {
 
 
 app.get('/main', async (req, res) => {
-    res.setHeader('Cache-Control', 'no-store'); 
+    if (req.session.username) {
+        return res.sendFile(path.join(__dirname, 'public', 'reg_main.html'));
+    }
     res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 app.get('/reg_main', async (req, res) => {
+    console.log("3")
     if (!req.session.username) {
         return res.sendFile(path.join(__dirname, 'public', 'error.html'));
     }
@@ -313,61 +315,82 @@ app.get('/reg_main', async (req, res) => {
 });
 
 // End of Change Password
-app.get('/changepassword', async (req, res) => {
+app.get('/editprofile', async (req, res) => {
     if (!req.session.username) {
         return res.sendFile(path.join(__dirname, 'public', 'error.html')); // Show error page
     }
-    res.setHeader('Cache-Control', 'no-store'); 
-    res.sendFile(path.join(__dirname, 'public', 'changepassword.html'));
+    const username = req.session.username;
+    const email = req.session.email;
+    res.render('editprofile', { username, email });
 });
 
-app.post('/changePassword', async (req, res) => {
+app.post('/editprofile', async (req, res) => {
     if (!req.session.username) {
-        return res.status(401).send('Unauthorized');
+        return res.sendFile(path.join(__dirname, 'public', 'error.html'));
     }
-    const { currentPassword, newPassword } = req.body;
-    const username = req.session.username;
-    
+    const {Email ,newUsername, currentPassword, newPassword } = req.body;
     try {
-        const result = await db.query("SELECT  password, salt FROM users WHERE username = $1 ", [username]);
-        if (result.rows.length === 0) {
-            return res.status(400).send('User not found');
+        if (Email != req.session.email){
+            const check_email = await db.query("SELECT * FROM users WHERE email = $1", [Email]);
+            if (check_email.rows.length != 0) {
+                return res.status(400).send('Invalid email');
+            }
+            await db.query("UPDATE users SET email = $1 WHERE email = $2", [Email, req.session.email]);
+            req.session.email = Email;
         }
-
-        const dbPassword = result.rows[0].password;
-        const salt = result.rows[0].salt;
-        const currentHash = crypto.createHmac('sha256', salt).update(currentPassword).digest('hex');
-
-        if (currentHash !== dbPassword) {
-            return res.status(400).send('Current password is incorrect');
+        if (newUsername != req.session.username){
+            const check_username = await db.query("SELECT * FROM users WHERE username = $1", [newUsername]);
+            if (check_username.rows.length != 0) {
+                return res.status(400).send('Invalid username');
+            }
+            userHistory = await db.query("SELECT username FROM passwordhistory WHERE username = $1", [req.session.username]);
+            if(userHistory.rows.length != 0){
+                await db.query("UPDATE passwordhistory SET username = $1 WHERE username = $2", [req.session.username, newUsername]);
+            }
+            await db.query("UPDATE users SET username = $1 WHERE username = $2", [newUsername, req.session.username]);
+            req.session.username = newUsername;
         }
+        if(currentPassword != "" && newPassword != ""){
+            const result = await db.query("SELECT  password, salt FROM users WHERE username = $1 ", [req.session.username]);
+            if (result.rows.length === 0) {
+                return res.status(400).send('User not found');
+            }
 
-        if (!isPasswordComplex(newPassword)) {
-            return res.status(400).send('New password does not meet complexity requirements');
-        }
+            const dbPassword = result.rows[0].password;
+            const salt = result.rows[0].salt;
+            const currentHash = crypto.createHmac('sha256', salt).update(currentPassword).digest('hex');
 
-        // start of Password history
-        const Passwords = await db.query("SELECT id, password FROM passwordhistory WHERE username = $1 ORDER BY id ASC", [username]);
-        const newHash = crypto.createHmac('sha256', salt).update(newPassword).digest('hex');
+            if (currentHash !== dbPassword) {
+                return res.status(400).send('Current password is incorrect');
+            }
 
-        const { historyLimit } = config.password;
+            if (!isPasswordComplex(newPassword)) {
+                return res.status(400).send('New password does not meet complexity requirements');
+            }
 
-        const previousPasswords = Passwords.rows.map(row => row.password);
-        if (previousPasswords.includes(newHash)){
-            return res.status(400).send('Cant use password you recently used');
-        }
+            // start of Password history
+            const Passwords = await db.query("SELECT id, password FROM passwordhistory WHERE username = $1 ORDER BY id ASC", [req.session.username]);
+            const newHash = crypto.createHmac('sha256', salt).update(newPassword).digest('hex');
 
-        if(Passwords.rows.length === historyLimit){
-            const passwordId = Passwords.rows[0].id;
-            await db.query("DELETE FROM passwordhistory WHERE id = $1", [passwordId]);
-        }
+            const { historyLimit } = config.password;
 
-        const query = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
-        await db.query(query, [username, newHash]);
-        // end of Password history
+            const previousPasswords = Passwords.rows.map(row => row.password);
+            if (previousPasswords.includes(newHash)){
+                return res.status(400).send('Cant use password you recently used');
+            }
 
-        await db.query("UPDATE users SET password = $1 WHERE username = $2", [newHash, username]);
-        res.status(200).send('Password changed successfully');
+            if(Passwords.rows.length === historyLimit){
+                const passwordId = Passwords.rows[0].id;
+                await db.query("DELETE FROM passwordhistory WHERE id = $1", [passwordId]);
+            }
+
+            const query = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
+            await db.query(query, [req.session.username, newHash]);
+            // end of Password history
+
+            await db.query("UPDATE users SET password = $1 WHERE username = $2", [newHash, req.session.username]);
+        }      
+        res.status(200).send('Profile Updated successfully');
     } catch (error) {
         console.error('Error changing password:', error);
         res.status(500).send('Error changing password');
@@ -429,4 +452,13 @@ app.post("/videos", async (req, res) => {
             res.status(400).end();
         }
     });
+});
+
+
+app.get('/profile', async (req, res) => {
+    const username = req.session.username;
+    const email = req.session.email;
+    
+    res.render('profile', { username, email });
+    
 });

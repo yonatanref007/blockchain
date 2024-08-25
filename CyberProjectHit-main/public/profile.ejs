@@ -40,16 +40,16 @@
           <div class="navbar-collapse collapse justify-content-center" id="navbarDefault">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="/index">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="about.html">About</a>
+                <a class="nav-link" href="/about">About</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="main.html">Streams</a>
+                <a class="nav-link" href="/main">Streams</a>
               </li>
               <li class="nav-item">
-                <a  action="/Logout" method="get" class="nav-link" href="#">Logout</a>
+                <a class="nav-link" href="/Logout">Logout</a>
               </li>
             </ul>
           </div>
@@ -72,11 +72,11 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block font-medium">Username:</label>
-                        <p class="border rounded p-2 bg-gray-100">JohnDoe</p>
+                        <p class="border rounded p-2 bg-gray-100"><%= username %></p>
                     </div>
                     <div>
                         <label class="block font-medium">Email:</label>
-                        <p class="border rounded p-2 bg-gray-100">johndoe@example.com</p>
+                        <p class="border rounded p-2 bg-gray-100"><%= email %></p>
                     </div>
                     <div>
                         <label class="block font-medium">Joined:</label>
@@ -116,7 +116,7 @@
 
 <script>
     function gotoEditProfile() {
-            window.location.href = "changePassword";
+            window.location.href = "editprofile";
     }
     function gotoMyCourses() {
             window.location.href = "courses";

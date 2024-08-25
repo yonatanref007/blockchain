@@ -49,10 +49,10 @@
                 <a class="nav-link" href="about.html">About</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="main.html">Streams</a>
+                <a class="nav-link" href="/main">Streams</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="register.html">Sign Up</a>
+                <a class="nav-link" href="/register.html">Sign Up</a>
               </li>
             </ul>
           </div>
@@ -77,6 +77,7 @@
           <h3><button type="button" onclick="gotoForgetPassword()">Forgot Password</button></h3>
         </div>
       </form>
+      <p id="statusMessage"></p>
     </div>
 
     <!-- JavaScript Libraries -->
@@ -97,7 +98,46 @@
     function gotoForgetPassword() {
         window.location.href = "forgotpassword.html";
     }
-   
+</script>
+    <!-- On load document -->
+<script>
+        
+      document.addEventListener('DOMContentLoaded', () => {
+          const loginForm = document.getElementById('loginForm');
+          const statusMessage = document.getElementById('statusMessage');
+          
+          loginForm.addEventListener('submit', async (event) => {
+              event.preventDefault(); 
+
+              const formData = new URLSearchParams(new FormData(loginForm));
+              
+
+              try {
+                  const response = await fetch('/login', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded'
+                      },
+                      body: formData
+                  });
+          
+                  if (response.ok) {
+                    window.location.href = '/main';
+                  } else {
+                      const errorMessage = await response.text();
+                      statusMessage.textContent = errorMessage;
+                      statusMessage.classList.add('text-red-500');
+                      statusMessage.classList.remove('text-green-500');
+                      
+                  }
+              } catch (error) {
+                  console.error('Error accured:', error);
+                  statusMessage.textContent = 'Error login user';
+                  statusMessage.classList.add('text-red-500');
+                  statusMessage.classList.remove('text-green-500');
+              }
+          });
+      });
 </script>
 
 </body>
