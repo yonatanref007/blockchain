@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Header from './Header';
+import Footer from './Footer';
 export default class Player extends Component {
     constructor(props) {
         super(props);
@@ -19,12 +21,14 @@ export default class Player extends Component {
     render() {
         return (
             <div className="App">
+                <Header/>
                 <header className="App-header">
                     <video controls muted autoPlay>
                         <source src={`http://localhost:4000/video/${this.state.videoId}`} type="video/mp4"></source>
                     </video>
                     <h1>{ this.state.videoData.name }</h1>
                 </header>
+                <Footer/>
             </div>
         )
     }
