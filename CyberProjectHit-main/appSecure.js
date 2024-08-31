@@ -39,7 +39,6 @@ app.use(session({
 // Set up view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public'));
-
 // Start the server
 const port = 3002; // or any port of your choice
 app.listen(port, () => {
@@ -63,8 +62,8 @@ db.connect((err) => {
     }
 });
 
-app.get('/index', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get('/', async (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/html/main', 'index.html'));
 });
 
 
@@ -96,7 +95,7 @@ function hashPassword(password) {
 
 // Start of Login
 app.get('/login', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, 'public/html/credential_related', 'login.html'));
 });
 //SQL injection
 //' OR '1'='1
@@ -129,7 +128,7 @@ app.post('/login', async (req, res) => {
 
 // Start of Register
 app.get('/register', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+    res.sendFile(path.join(__dirname, 'public/html/credential_related', 'register.html'));
 });
 //SQL injection , write it inside password and repeat password
 //'); DROP TABLE users; --
@@ -189,7 +188,7 @@ app.get('/logout', (req, res) => {
 
 //Start of Forgot Password
 app.get('/forgotpassword', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'forgotpassword.html'));
+    res.sendFile(path.join(__dirname, 'public/html/credential_related', 'forgotpassword.html'));
 });
 
 app.post('/forgotPassword', async (req, res) => {
@@ -241,7 +240,7 @@ app.post('/forgotPassword', async (req, res) => {
 //Sart of Reset Password
 app.get('/reset/:token', (req, res) => {
     const token = req.params.token;
-    res.render('resetpassword', { token });
+    res.render('html/credential_related/resetpassword', { token });
 });
 
 
@@ -264,8 +263,7 @@ app.post('/resetPassword', async (req, res) => {
 
         //Extire token page
         if (reset_token_expiry < new Date()) {
-            return res.sendFile(path.join(__dirname, 'public', 'error.html'));
-            //return res.sendFile(path.join(__dirname, 'public', 'error.html'));
+            return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html'));
         }
 
         // start of Password history
@@ -301,32 +299,35 @@ app.post('/resetPassword', async (req, res) => {
 
 app.get('/main', async (req, res) => {
     if (req.session.username) {
-        return res.sendFile(path.join(__dirname, 'public', 'reg_main.html'));
+        return res.sendFile(path.join(__dirname, 'public/html/profile_related', 'reg_main.html'));
     }
-    res.sendFile(path.join(__dirname, 'public', 'main.html'));
+    res.sendFile(path.join(__dirname, 'public/html/main', 'main.html'));
 });
 
 app.get('/reg_main', async (req, res) => {
-    console.log("3")
     if (!req.session.username) {
-        return res.sendFile(path.join(__dirname, 'public', 'error.html'));
+        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html'));
     }
-    res.sendFile(path.join(__dirname, 'public', 'reg_main.html'));
+    res.sendFile(path.join(__dirname, 'public/html/profile_related', 'reg_main.html'));
+});
+
+app.get('/about', async (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/html/main', 'about.html'));
 });
 
 // End of Change Password
 app.get('/editprofile', async (req, res) => {
     if (!req.session.username) {
-        return res.sendFile(path.join(__dirname, 'public', 'error.html')); // Show error page
+        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html')); // Show error page
     }
     const username = req.session.username;
     const email = req.session.email;
-    res.render('editprofile', { username, email });
+    res.render('html/profile_related/editprofile', { username, email });
 });
 
 app.post('/editprofile', async (req, res) => {
     if (!req.session.username) {
-        return res.sendFile(path.join(__dirname, 'public', 'error.html'));
+        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html'));
     }
     const {Email ,newUsername, currentPassword, newPassword } = req.body;
     try {
@@ -407,7 +408,7 @@ app.post('/editprofile', async (req, res) => {
 // upload videos
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './public/upload_vid_files/uploads/');
+        cb(null, './public/html/upload_vid_files/uploads/');
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -437,7 +438,7 @@ function checkFileType(file, cb) {
 }
 
 app.get('/videos', async (req, res) => {
-    res.render('upload_videos');
+    return res.sendFile(path.join(__dirname, 'public/html/profile_related', 'upload_videos.html'));
 });
 
 app.post("/videos", async (req, res) => {
@@ -455,10 +456,70 @@ app.post("/videos", async (req, res) => {
 });
 
 
+// Set up multer for handling file uploads
+const uploads = multer({ dest: path.join(__dirname, 'public','html', 'upload_vid_files', 'uploads') });
+
+// Serve the uploads directory
+const uploadsDir = path.join(__dirname, 'public','html', 'upload_vid_files', 'uploads');
+app.use('/upload_vid_files/uploads', express.static(uploadsDir));
+
+// Serve the video player HTML file
+app.get('/video-player.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'video-player.html'));
+});
+
+// Get the list of videos in the uploads folder
+app.get('/api/videos', (req, res) => {
+    const videoDir = path.join(__dirname, 'public/html/upload_vid_files/uploads');
+    fs.readdir(videoDir, (err, files) => {
+        if (err) {
+            console.error('Error reading video directory:', err);
+            return res.status(500).send('Unable to read video directory');
+        }
+
+        // Filter out only video files (optional)
+        const videoFiles = files.filter(file => file.endsWith('.mp4'));
+
+        res.json(videoFiles);
+    });
+});
+
+// Handle video uploads
+app.post('/videos', uploads.array('file[]'), (req, res) => {
+    console.log('Files uploaded:', req.files);
+    res.status(200).send('Files uploaded successfully!');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 app.get('/profile', async (req, res) => {
+    if (!req.session.username) {
+        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html'));
+    }
     const username = req.session.username;
     const email = req.session.email;
     
-    res.render('profile', { username, email });
+    res.render('html/profile_related/profile.ejs', { username, email });
     
+});
+
+app.delete('/videos/:filename', (req, res) => {
+    const videoDir = path.join(__dirname, 'public', 'html', 'upload_vid_files', 'uploads');
+    const filePath = path.join(videoDir, req.params.filename);
+
+    fs.unlink(filePath, err => {
+        if (err) {
+            console.error('Error deleting video:', err);
+            return res.status(500).send('Error deleting video');
+        }
+        res.status(200).send('Video deleted successfully');
+    });
+});
+
+app.get('/video-player', (req, res) => {
+    res.render('html/main/video-player', { session: req.session });
 });

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+
+    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <!-- To return to the original css delete the _copy --> 
+    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+
+
+    <!-- Main Stylesheet File -->
+    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    
+    <title>Video Player</title>
+    <style>
+        #videoPlayer {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #videoList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #videoList li {
+            margin-bottom: 10px;
+        }
+        #videoPlayer {
+            width: 100%;
+            max-width: 800px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-trans navbar-expand-lg fixed-top">
+        <div class="container">
+          <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault"
+            aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <a class="navbar-brand text-brand" href="/">Block<span class="color-b">Chain</span></a>
+          <button type="button" class="btn btn-link nav-search navbar-toggle-box-collapse d-md-none" data-toggle="collapse"
+            data-target="#navbarTogglerDemo01" aria-expanded="false">
+            <span class="fa fa-search" aria-hidden="true"></span>
+          </button>
+          <div class="navbar-collapse collapse justify-content-center" id="navbarDefault">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/main">Streams</a>
+              </li>
+              <li class="nav-item">
+                <% if (!session.username) { %>
+                  <a class="nav-link" href="/login" id="sign_in">Sign In</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/register" id="sign_up">Sign Up</a>
+                <% } else { %>
+                  <a class="nav-link" href="/profile" id="profile">Profile</a>
+                <% } %>
+              </li>
+            </ul>
+          </div>
+          <button type="button" class="btn btn-b-n navbar-toggle-box-collapse d-none d-md-block" data-toggle="collapse"
+            data-target="#navbarTogglerDemo01" aria-expanded="false">
+            <span class="fa fa-search" aria-hidden="true"></span>
+          </button>
+        </div>
+      </nav>
+    <section class="intro-single">
+        <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-8">
+            <div class="title-single-box">
+                <h1 class="title-single">Video Player</h1>
+            </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    <video id="videoPlayer" controls>
+        Your browser does not support the video tag.
+    </video>
+    <h2>Available Videos</h2>
+    <ul id="videoList"></ul>
+    <div id="errorMessage" class="error"></div>
+
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoList = document.getElementById('videoList');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Fetch the list of videos from the server
+        fetch('/api/videos')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(videos => {
+                if (videos.length === 0) {
+                    errorMessage.textContent = 'No videos found in the uploads directory.';
+                    return;
+                }
+                videos.forEach(video => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = '#';
+                    a.textContent = video;
+                    a.onclick = (e) => {
+                        e.preventDefault();
+                        videoPlayer.src = `/upload_vid_files/uploads/${video}`;
+                        videoPlayer.play();
+                    };
+                    li.appendChild(a);
+                    videoList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error loading videos: ${error.message}`;
+            });
+    </script>
+        <!-- JavaScript Libraries -->
+        <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+        <!-- Contact Form JavaScript File -->
+        <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    
+        <!-- Template Main Javascript File -->
+        <script src="../../main_css/nav_bar_css/js/main.js"></script>
+        
+</body>
+</html>
