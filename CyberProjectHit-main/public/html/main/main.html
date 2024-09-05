@@ -129,124 +129,7 @@
     <!--/ News Grid Star /-->
         <section class="news-grid grid">
             <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                <div class="card-box-b card-shadow news-box">
-                    <div class="img-box-b">
-                    <img src="../../main_css/main_body_css/img/post-1.jpg" alt="" class="img-b img-fluid">
-                    </div>
-                    <div class="card-overlay">
-                    <div class="card-header-b">
-                        <div class="card-category-b">
-                        <a href="#" class="category-b">gaming</a>
-                        </div>
-                        <div class="card-title-b">
-                        <h2 class="title-2">
-                            <a href="blog-single.html">Highway To Plat
-                            
-                        </h2>
-                        </div>
-                        <div class="card-date">
-                        <span class="date-b">Zazi Bazazi</span>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-3">
-                <!-- Bootstrap CSS File -->
-                <div class="card-box-b card-shadow news-box">
-                    <div class="img-box-b">
-                    <img src="../../main_css/main_body_css/img/post-2.jpg" alt="" class="img-b img-fluid">
-                    </div>
-                    <div class="card-overlay">
-                    <div class="card-header-b">
-                        <div class="card-category-b">
-                        <a href="blog-single.html" class="category-b">Travel</a>
-                        </div>
-                        <div class="card-title-b">
-                        <h2 class="title-2">
-                            <a href="blog-single.html">Travel is comming
-                        </h2>
-                        </div>
-                        <div class="card-date">
-                        <span class="date-b">18 Sep. 2017</span>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-3">
-                <div class="card-box-b card-shadow news-box">
-                    <div class="img-box-b">
-                    <img src="../../main_css/main_body_css/img/post-3.jpg" alt="" class="img-b img-fluid">
-                    </div>
-                    <div class="card-overlay">
-                    <div class="card-header-b">
-                        <div class="card-category-b">
-                        <a href="#" class="category-b">Travel</a>
-                        </div>
-                        <div class="card-title-b">
-                        <h2 class="title-2">
-                            <a href="blog-single.html">Travel is comming
-                        </h2>
-                        </div>
-                        <div class="card-date">
-                        <span class="date-b">18 Sep. 2017</span>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="card-box-b card-shadow news-box">
-                      <div class="img-box-b">
-                      <img src="../../main_css/main_body_css/img/post-3.jpg" alt="" class="img-b img-fluid">
-                      </div>
-                      <div class="card-overlay">
-                      <div class="card-header-b">
-                          <div class="card-category-b">
-                          <a href="#" class="category-b">Travel</a>
-                          </div>
-                          <div class="card-title-b">
-                          <h2 class="title-2">
-                              <a href="blog-single.html">Travel is comming
-                          </h2>
-                          </div>
-                          <div class="card-date">
-                          <span class="date-b">18 Sep. 2017</span>
-                          </div>
-                      </div>
-                      </div>
-                  </div>
-                  </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                <nav class="pagination-a">
-                    <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">
-                        <span class="ion-ios-arrow-back"></span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item active">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item next">
-                        <a class="page-link" href="#">
-                        <span class="ion-ios-arrow-forward"></span>
-                        </a>
-                    </li>
-                    </ul>
-                </nav>
-                </div>
+            <div class="row" id="videoList">
             </div>
             </div>
         </section>
@@ -265,6 +148,114 @@
 
     <!-- Template Main Javascript File -->
     <script src="../../main_css/nav_bar_css/js/main.js"></script>
-    
+    <script>
+      const videoPlayer = document.getElementById('videoPlayer');
+      const videoList = document.getElementById('videoList');
+      const errorMessage = document.getElementById('errorMessage');
+      // Fetch the list of videos from the server
+      fetch('/api/videos')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(videos => {
+                if (videos.length === 0) {
+                    errorMessage.textContent = 'No videos found in the uploads directory.';
+                    return;
+                }
+                videos.forEach(video => {
+                    const col3 = document.createElement('div');
+                    col3.className = 'col-md-3';
+
+                    const cardbox = document.createElement('div');
+                    cardbox.className = 'card-box-b card-shadow news-box';
+                    
+                    
+                    const vidbox = document.createElement('div');
+                    vidbox.className = 'img-box-b';
+
+                    const cardOverlay = document.createElement('div');
+                    cardOverlay.className = 'card-overlay';
+
+                    const cardHeaderB = document.createElement('div');
+                    cardHeaderB.className = 'card-header-b';
+
+                    const cardCategoryB = document.createElement('div');
+                    cardCategoryB.className = 'card-category-b';
+
+                    const categoryLink = document.createElement('a');
+                    categoryLink.href = '#';
+                    categoryLink.className = 'category-b';
+                    categoryLink.textContent = 'Travel';
+
+                    cardCategoryB.appendChild(categoryLink);
+
+                    const cardTitleB = document.createElement('div');
+                    cardTitleB.className = 'card-title-b';
+
+                    const titleH2 = document.createElement('h2');
+                    titleH2.className = 'title-2';
+
+                    const titleLink = document.createElement('a');
+                    titleLink.innerHTML = 'Travel is comming<br> new';
+
+                    titleH2.appendChild(titleLink);
+
+                    cardTitleB.appendChild(titleH2);
+
+                    const cardDate = document.createElement('div');
+                    cardDate.className = 'card-date';
+
+                    const dateSpan = document.createElement('span');
+                    dateSpan.className = 'date-b';
+                    dateSpan.textContent = '18 Sep. 2017';
+
+                    cardDate.appendChild(dateSpan);
+
+                    cardHeaderB.appendChild(cardCategoryB);
+                    cardHeaderB.appendChild(cardTitleB);
+                    cardHeaderB.appendChild(cardDate);
+
+                    cardOverlay.appendChild(cardHeaderB);
+
+                    const videoElement = document.createElement('video');
+                    videoElement.src = `/upload_vid_files/uploads/${video}`;
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    videoElement.addEventListener('loadeddata', () => {
+                        canvas.width = videoElement.videoWidth;
+                        canvas.height = videoElement.videoHeight;
+
+                        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                    });
+                    let i = -1;
+                    cardbox.onclick = () => {
+                      if(i<0){
+                        videoElement.play()
+                        i *= -1
+                      }
+                      else{
+                        videoElement.pause()
+                        i *= -1
+                      }
+                    }
+
+                    vidbox.appendChild(videoElement);
+                    cardbox.appendChild(vidbox);
+                    cardbox.appendChild(cardOverlay);
+                    col3.appendChild(cardbox);
+                    videoList.appendChild(col3);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error loading videos: ${error.message}`;
+            });
+    </script>
 </body>
 </html>

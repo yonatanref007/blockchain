@@ -26,6 +26,10 @@
     
     <title>Video Player</title>
     <style>
+        .card-box-b::before {
+            content: none; /* Remove the content */
+            display: none; /* Hide the pseudo-element */
+        }
         #videoPlayer {
             font-family: Arial, sans-serif;
             max-width: 800px;
@@ -95,22 +99,26 @@
           </button>
         </div>
       </nav>
-    <section class="intro-single">
+      <section class="intro-single">
         <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-lg-8">
-            <div class="title-single-box">
-                <h1 class="title-single">Video Player</h1>
+            <div class="row">
+                <div class="col-md-12 col-lg-8">
+                    <div class="title-single-box">
+                        <h1 class="title-single">Video Player</h1>
+                    </div>
+                </div>
             </div>
-            </div>
-        </div>
         </div>
     </section>
     <video id="videoPlayer" controls>
         Your browser does not support the video tag.
     </video>
     <h2>Available Videos</h2>
-    <ul id="videoList"></ul>
+    <section class="news-grid grid">
+        <div class="container">
+            <div class="row" id="videoList"></div>
+        </div>
+    </section>
     <div id="errorMessage" class="error"></div>
 
     <script>
@@ -132,37 +140,59 @@
                     return;
                 }
                 videos.forEach(video => {
-                    const li = document.createElement('li');
-                    const a = document.createElement('a');
-                    a.href = '#';
-                    a.textContent = video;
-                    a.onclick = (e) => {
-                        e.preventDefault();
-                        videoPlayer.src = `/upload_vid_files/uploads/${video}`;
-                        videoPlayer.play();
-                    };
-                    li.appendChild(a);
-                    videoList.appendChild(li);
+                    const col3 = document.createElement('div');
+                    col3.className = 'col-md-3';
+
+                    const cardbox = document.createElement('div');
+                    cardbox.className = 'card-box-b card-shadow news-box';
+                    
+                    
+                    const vidbox = document.createElement('div');
+                    vidbox.className = 'img-box-b';
+
+                    
+                    const videoElement = document.createElement('video');
+                    videoElement.src = `/upload_vid_files/uploads/${video}`;
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    videoElement.addEventListener('loadeddata', () => {
+                        canvas.width = videoElement.videoWidth;
+                        canvas.height = videoElement.videoHeight;
+
+                        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                    });
+                    cardbox.onclick = () => {
+                      videoPlayer.src = videoElement.src;
+                      videoPlayer.play()
+                    }
+
+                    vidbox.appendChild(videoElement);
+                    cardbox.appendChild(vidbox);
+                    col3.appendChild(cardbox);
+                    videoList.appendChild(col3);
                 });
             })
             .catch(error => {
                 console.error('Error:', error);
                 errorMessage.textContent = `Error loading videos: ${error.message}`;
             });
+
     </script>
-        <!-- JavaScript Libraries -->
-        <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
-        <!-- Contact Form JavaScript File -->
-        <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
-    
-        <!-- Template Main Javascript File -->
-        <script src="../../main_css/nav_bar_css/js/main.js"></script>
-        
+
+    <!-- JavaScript Libraries -->
+    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <!-- Contact Form JavaScript File -->
+    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <!-- Template Main Javascript File -->
+    <script src="../../main_css/nav_bar_css/js/main.js"></script>
 </body>
 </html>
