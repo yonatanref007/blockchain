@@ -78,7 +78,7 @@ form h3{
   border: none;
   background: #337ab7;
   cursor: pointer;
-  
+
 }
 .input-box.button input:hover{
   background: #0e4bf1;
@@ -94,4 +94,23 @@ form .text h3 a{
 }
 form .text h3 a:hover{
   text-decoration: underline;
+}
+.input-box.wallet-button input {
+  color: #fff;
+  letter-spacing: 1px;
+  border: none;
+  background: #337ab7;
+  cursor: pointer;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: center;
+  padding: 10px 15px;
+  height: auto;
+  min-height: 52px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.input-box.wallet-button input:hover {
+  background: #0e4bf1;
 }

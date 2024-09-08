@@ -94,6 +94,9 @@
                 <div class="Profile button">
                   <button onclick="gotoUpload()" value="upload Vidoes">Upload File</button>
                 </div>
+                <div class="Profile button">
+                  <button onclick="connectWallet()" value="upload Vidoes">Connect Metamask Wallet</button>
+                </div>
             </section>
             <br>
             <div id="statusMessage" class="text-red-500 mt-2"></div>
@@ -124,6 +127,20 @@
     function gotoUpload() {
             window.location.href = "videos";
     }  
+    function connectWallet(){
+      let button = event.target;
+  ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
+    account = accounts[0];
+    console.log(account);
+    button.textContent = account;
+    ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(result => {
+      console.log(result);
+      let wei = parseInt(result, 16); 
+      let balance = wei / (10**18);
+      console.log(balance + " ETH");
+    });
+  });
+};
 </script>
 
 </body>
