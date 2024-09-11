@@ -8,29 +8,20 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     reset_token VARCHAR(255),
     reset_token_expiry TIMESTAMP,
-    salt VARCHAR(255)
+    salt VARCHAR(255),
+    metamask VARCHAR(255)
 );
 
 -- Items table creation --
-CREATE TABLE items (
+CREATE TABLE video (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    country_name VARCHAR(100),
-    city_name VARCHAR(100),
-    street_name VARCHAR(100),
-    street_number VARCHAR(50),
-    status VARCHAR(50) CHECK (status IN ('for sale', 'for sublett', 'for rent')),
-    price DECIMAL(10, 2),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    username VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
+    description VARCHAR(100),
+    category VARCHAR(100),
 );
 
--- Item pictures table creation --
-CREATE TABLE item_pictures (
-    id SERIAL PRIMARY KEY,
-    item_id INTEGER NOT NULL,
-    picture_url TEXT,
-    FOREIGN KEY (item_id) REFERENCES items(id)
-);
+
 
 CREATE TABLE passwordhistory (
     id SERIAL PRIMARY KEY,

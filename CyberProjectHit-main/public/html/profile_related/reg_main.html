@@ -147,7 +147,6 @@
     <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
 
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
     <script>
       const videoPlayer = document.getElementById('videoPlayer');
       const videoList = document.getElementById('videoList');
@@ -186,10 +185,14 @@
                     cardCategoryB.className = 'card-category-b';
 
                     const categoryLink = document.createElement('a');
-                    categoryLink.href = '#';
                     categoryLink.className = 'category-b';
-                    categoryLink.textContent = 'Travel';
+                    
 
+                    const parts = video.split('+');
+                    const username = parts[parts.length - 1];
+
+                    categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
+                    categoryLink.textContent = 'Play';
                     cardCategoryB.appendChild(categoryLink);
 
                     const cardTitleB = document.createElement('div');

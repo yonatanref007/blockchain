@@ -401,10 +401,6 @@ app.post('/editprofile', async (req, res) => {
 // End of Change Password
 
 
-
-
-
-
 // upload videos
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -521,6 +517,22 @@ app.delete('/videos/:filename', (req, res) => {
     });
 });
 
-app.get('/video-player', (req, res) => {
-    res.render('html/main/video-player', { session: req.session });
+app.get('/video-player', async (req, res) => {
+    const video = req.query.video;
+    const username = req.query.username;
+    ///const meta = await db.query("SELECT metamask FROM users WHERE username = $1", [username]);
+    ///const { metamask } = meta.rows[0];
+
+    ///const result = await db.query("SELECT description, category FROM video WHERE name = $1", [video]);
+    ///const { description, category} = result.rows[0];
+    console.log('Video:', video);
+    console.log('Username:', username);
+    res.render('html/main/video-player', { 
+        session: req.session, 
+        video: video, 
+        username: username
+        ///metamask: metamask,
+        ///description: description,
+        ///category: category
+    });
 });
