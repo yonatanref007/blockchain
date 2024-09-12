@@ -134,26 +134,27 @@
     <!--/ Intro Single End /-->
 
     <!--/ News Grid Star /-->
+    <form id="upload-form" action="/api/upload" method="post" enctype="multipart/form-data">
         <section class="icon-wrap grid">
             <div class="container body">
                 <div class="input-div">
                     <div class="main-title">
                         <h6>Video Title</h6>
                      </div>
-                    <input type="text" placeholder="Contrary to popular belief, Lorem Ipsum (2019) is not." id="e1" class="form-control">
+                    <input type="text" name="title" placeholder="Video Title" id="e1" class="form-control">
                  </div>
                  <div class="input-div">
                     <div class="main-title">
                         <h6>About</h6>
                      </div>
-                     <textarea rows="3" id="e2" name="e2" class="form-control">Description</textarea>
+                     <textarea rows="3" id="e2" name="about" class="form-control" placeholder="Description"></textarea>
                  </div>
                  
                  <div class="input-div">
                     <div class="main-title">
                         <h6>Video File</h6>
                      </div>
-                    <input type="file" class="file" accept="video/*">
+                     <input type="file" class="file" name="video" accept="video/*" required>
                 </div>
                 <div class="input-div"></div>
                 <div class="row ">
@@ -233,16 +234,11 @@
                     </div>
                 </div>    
             <div class="row" id="videoList">
-                <div class="osahan-area text-center mt-3">
-                    <button class="btn btn-outline-primary">Upload</button>
-                 </div>
-            
             </div>
             </div>
-
-            
-            
+            <button type="submit" class="btn btn-primary">Upload</button>  
         </section>
+      </form>
         
 
     <!--/ News Grid End /-->
@@ -260,69 +256,78 @@
 
     <!-- Template Main Javascript File -->
     <script src="../../main_css/nav_bar_css/js/main.js"></script>
-    <script src="../upload_vid_files/upload.js"></script>
+    <script src="../upload_vid_files/upload_back.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        const videoList = document.getElementById('saved-div');
-        const errorMessage = document.querySelector('.server-message');
-        // Fetch the list of videos from the server
-        fetch('/api/videos')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(videos => {
-                if (videos.length === 0) {
-                    errorMessage.textContent = 'No videos found in the uploads directory.';
-                    return;
-                }
-                videos.forEach(video => {
-                    const videoContainer = document.createElement('div');
-                    videoContainer.className = 'video-container video';
+    const uploadButton = document.querySelector('button.btn-outline-primary');
+    const fileInput = document.querySelector('input[type="file"]');
+    const titleInput = document.getElementById('e1');
+    const descriptionInput = document.getElementById('e2');
+    const checkboxes = document.querySelectorAll('.custom-control-input');
 
-                    const videoElement = document.createElement('video');
-                    videoElement.controls = true;
-                    videoElement.width = 200;
+    uploadButton.addEventListener('click', function(event) {
+        event.preventDefault();
 
-                    const source = document.createElement('source');
-                    source.src = `/upload_vid_files/uploads/${video}`;
-                    source.type = 'video/mp4';
+        // Validate form fields
+        if (!fileInput.files.length) {
+            alert('Please select a video file.');
+            return;
+        }
+        if (!titleInput.value.trim()) {
+            alert('Please enter a title for the video.');
+            return;
+        }
+        if (!descriptionInput.value.trim()) {
+            alert('Please provide a description.');
+            return;
+        }
 
-                    const button = document.createElement('button');
-                    button.className = 'delete-button';
-                    button.innerHTML = '&times;'; // Add a delete symbol
-                    button.onclick = () => deleteSavedVideo(video); // Pass the video filename to the delete function
+        // Collect selected categories
+        let selectedCategories = [];
+        checkboxes.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                selectedCategories.push(checkbox.labels[0].innerText);
+            }
+        });
 
-                    videoElement.appendChild(source);
-                    videoContainer.appendChild(videoElement);
-                    videoContainer.appendChild(button);
-                    videoList.appendChild(videoContainer);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessage.textContent = `Error loading videos: ${error.message}`;
-            });
-        
-    });
-    function deleteSavedVideo(video) {
-        fetch(`/videos/${video}`, {
-            method: 'DELETE'
+        if (selectedCategories.length === 0) {
+            alert('Please select at least one category.');
+            return;
+        } else if (selectedCategories.length > 6) {
+            alert('You can select up to 6 categories only.');
+            return;
+        }
+
+        // Create FormData object to send the file and data
+        let formData = new FormData();
+        formData.append('video', fileInput.files[0]);
+        formData.append('title', titleInput.value.trim());
+        formData.append('description', descriptionInput.value.trim());
+        formData.append('categories', JSON.stringify(selectedCategories));
+
+        // Send POST request to the server
+        fetch('/api/upload', {
+            method: 'POST',
+            body: formData
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error('Failed to upload video. Please try again.');
             }
-            location.reload(); // Reload the page to update the list
+            return response.json();
+        })
+        .then(data => {
+            alert('Video uploaded successfully!');
+            // Redirect or perform other actions as needed
         })
         .catch(error => {
-            console.error('Error deleting video:', error);
-            errorMessage.textContent = `Error deleting video: ${error.message}`;
+            console.error('Error:', error);
+            alert('An error occurred during the upload: ' + error.message);
         });
-    }
+    });
+});
+
     </script>
 </body>
 
