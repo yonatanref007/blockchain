@@ -186,10 +186,14 @@
                     cardCategoryB.className = 'card-category-b';
 
                     const categoryLink = document.createElement('a');
-                    categoryLink.href = '#';
                     categoryLink.className = 'category-b';
-                    categoryLink.textContent = 'Travel';
+                    
 
+                    const parts = video.split('+');
+                    const username = parts[parts.length - 1];
+
+                    categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
+                    categoryLink.textContent = 'Play';
                     cardCategoryB.appendChild(categoryLink);
 
                     const cardTitleB = document.createElement('div');

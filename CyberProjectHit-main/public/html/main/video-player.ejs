@@ -135,44 +135,104 @@
                 return response.json();
             })
             .then(videos => {
+                const videoSrc = '<%= video %>';
+                const userSrc = '<%= username %>';
+                videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;
+                videoPlayer.play()
                 if (videos.length === 0) {
                     errorMessage.textContent = 'No videos found in the uploads directory.';
                     return;
                 }
                 videos.forEach(video => {
-                    const col3 = document.createElement('div');
-                    col3.className = 'col-md-3';
+                  if(video != videoSrc){
+                    const parts = video.split('+');
+                    const username = parts[parts.length - 1];
+                    if(username === userSrc){
+                      const col3 = document.createElement('div');
+                      col3.className = 'col-md-3';
 
-                    const cardbox = document.createElement('div');
-                    cardbox.className = 'card-box-b card-shadow news-box';
-                    
-                    
-                    const vidbox = document.createElement('div');
-                    vidbox.className = 'img-box-b';
+                      const cardbox = document.createElement('div');
+                      cardbox.className = 'card-box-b card-shadow news-box';
+                      
+                      const vidbox = document.createElement('div');
+                      vidbox.className = 'img-box-b';
 
-                    
-                    const videoElement = document.createElement('video');
-                    videoElement.src = `/upload_vid_files/uploads/${video}`;
+                      const cardOverlay = document.createElement('div');
+                      cardOverlay.className = 'card-overlay';
 
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
+                      const cardHeaderB = document.createElement('div');
+                      cardHeaderB.className = 'card-header-b';
 
-                    videoElement.addEventListener('loadeddata', () => {
-                        canvas.width = videoElement.videoWidth;
-                        canvas.height = videoElement.videoHeight;
+                      const cardCategoryB = document.createElement('div');
+                      cardCategoryB.className = 'card-category-b';
 
-                        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                      const categoryLink = document.createElement('a');
+                      categoryLink.className = 'category-b';
 
-                    });
-                    cardbox.onclick = () => {
-                      videoPlayer.src = videoElement.src;
-                      videoPlayer.play()
+                      categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
+                      categoryLink.textContent = 'Play';
+                      cardCategoryB.appendChild(categoryLink);
+
+                      const cardTitleB = document.createElement('div');
+                      cardTitleB.className = 'card-title-b';
+
+                      const titleH2 = document.createElement('h2');
+                      titleH2.className = 'title-2';
+
+                      const titleLink = document.createElement('a');
+                      titleLink.innerHTML = 'Travel is comming<br> new';
+
+                      titleH2.appendChild(titleLink);
+
+                      cardTitleB.appendChild(titleH2);
+
+                      const cardDate = document.createElement('div');
+                      cardDate.className = 'card-date';
+
+                      const dateSpan = document.createElement('span');
+                      dateSpan.className = 'date-b';
+                      dateSpan.textContent = '18 Sep. 2017';
+
+                      cardDate.appendChild(dateSpan);
+
+                      cardHeaderB.appendChild(cardCategoryB);
+                      cardHeaderB.appendChild(cardTitleB);
+                      cardHeaderB.appendChild(cardDate);
+
+                      cardOverlay.appendChild(cardHeaderB);
+
+                      const videoElement = document.createElement('video');
+                      videoElement.src = `/upload_vid_files/uploads/${video}`;
+
+                      const canvas = document.createElement('canvas');
+                      const context = canvas.getContext('2d');
+
+                      videoElement.addEventListener('loadeddata', () => {
+                          canvas.width = videoElement.videoWidth;
+                          canvas.height = videoElement.videoHeight;
+
+                          context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                      });
+                      let i = -1;
+                      cardbox.onclick = () => {
+                        if(i<0){
+                          videoElement.play()
+                          i *= -1
+                        }
+                        else{
+                          videoElement.pause()
+                          i *= -1
+                        }
+                      }
+
+                      vidbox.appendChild(videoElement);
+                      cardbox.appendChild(vidbox);
+                      cardbox.appendChild(cardOverlay);
+                      col3.appendChild(cardbox);
+                      videoList.appendChild(col3);
                     }
-
-                    vidbox.appendChild(videoElement);
-                    cardbox.appendChild(vidbox);
-                    col3.appendChild(cardbox);
-                    videoList.appendChild(col3);
+                  }
                 });
             })
             .catch(error => {
