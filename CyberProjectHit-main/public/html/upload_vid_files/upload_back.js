@@ -6,16 +6,15 @@ const fs = require('fs');
 const app = express();
 const port = 3002;
 
-// Set up EJS as the view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
 // Set up view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'public'));
+app.set('public', path.join(__dirname, 'public'));
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
+
+// Middleware to parse form data
+app.use(express.urlencoded({ extended: true }));
 
 // Configure multer for file upload
 const storage = multer.diskStorage({
@@ -66,8 +65,4 @@ app.post('/upload', upload.single('video'), (req, res) => {
   } else {
     res.status(400).send('No file uploaded or invalid file type.');
   }
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
 });

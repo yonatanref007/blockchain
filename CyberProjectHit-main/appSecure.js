@@ -434,8 +434,13 @@ function checkFileType(file, cb) {
     }
 }
 
-app.get('/videos', async (req, res) => {
-    return res.sendFile(path.join(__dirname, 'public/html/profile_related', 'upload_videos.html'));
+app.get('/upload_videos', async (req, res) => {
+    if (!req.session.username) {
+        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html')); // Show error page
+    }
+    const username = req.session.username;
+    const email = req.session.email;
+    return res.render(path.join(__dirname, 'public/html/profile_related', 'upload_new.ejs'));
 });
 
 app.post("/videos", async (req, res) => {
