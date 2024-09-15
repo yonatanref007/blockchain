@@ -443,17 +443,27 @@ app.get('/upload_videos', async (req, res) => {
     return res.render(path.join(__dirname, 'public/html/profile_related', 'upload_new.ejs'));
 });
 
-app.post("/videos", async (req, res) => {
+app.post("/videos", (req, res) => {
     upload(req, res, (err) => {
-        if (!err && req.files && req.files.length > 0) {
-            res.status(200).send();
-        } else if (!err && (!req.files || req.files.length === 0)) {
-            res.statusMessage = "Please select a video to upload.";
-            res.status(400).end();
-        } else {
-            res.statusMessage = (err === "Please upload an MP4 file only.") ? err : "Video exceeds the limit of 2 MB.";
-            res.status(400).end();
+        if (err instanceof multer.MulterError) {
+            // Handle multer errors (e.g., file too large)
+            if (err.code === "LIMIT_FILE_SIZE") {
+                return res.status(400).json({ message: "Video exceeds the limit of 2 MB." });
+            }
+            // Generic multer error
+            return res.status(500).json({ message: "Server error during upload." });
+        } else if (err) {
+            // Non-multer errors (e.g., invalid file type)
+            return res.status(400).json({ message: err });
         }
+
+        // Handle the case when no file is provided
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "Please select a video to upload." });
+        }
+
+        // If everything is OK
+        res.status(200).json({ message: "Upload successful", files: req.files });
     });
 });
 
@@ -487,15 +497,12 @@ app.get('/api/videos', (req, res) => {
 });
 
 // Handle video uploads
-app.post('/videos', uploads.array('file[]'), (req, res) => {
-    console.log('Files uploaded:', req.files);
-    res.status(200).send('Files uploaded successfully!');
-});
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(400).json({ message: 'Upload failed', error: err.message });
 });
 
 app.get('/profile', async (req, res) => {

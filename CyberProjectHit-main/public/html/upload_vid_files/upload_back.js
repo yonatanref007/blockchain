@@ -1,68 +1,75 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+document.addEventListener("DOMContentLoaded", function() {
+  const uploadForm = document.getElementById('upload-form');
+  const fileInput = document.querySelector('input[type="file"]');
+  const titleInput = document.getElementById('e1');
+  const descriptionInput = document.getElementById('e2');
+  const checkboxes = document.querySelectorAll('.custom-control-input');
 
-const app = express();
-const port = 3002;
+  uploadForm.addEventListener('submit', function(event) {
+      event.preventDefault();
 
-// Set up view engine
-app.set('view engine', 'ejs');
-app.set('public', path.join(__dirname, 'public'));
+      // Validate form fields
+      if (!fileInput.files.length) {
+          alert('Please select a video file.');
+          return;
+      }
+      if (!titleInput.value.trim()) {
+          alert('Please enter a title for the video.');
+          return;
+      }
+      if (!descriptionInput.value.trim()) {
+          alert('Please provide a description.');
+          return;
+      }
 
-// Serve static files from the 'public' directory
-app.use(express.static('public'));
+      // Collect selected categories
+      let selectedCategories = [];
+      checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+              selectedCategories.push(checkbox.labels[0].innerText);
+          }
+      });
 
-// Middleware to parse form data
-app.use(express.urlencoded({ extended: true }));
+      if (selectedCategories.length === 0) {
+          alert('Please select at least one category.');
+          return;
+      } else if (selectedCategories.length > 6) {
+          alert('You can select up to 6 categories only.');
+          return;
+      }
 
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = 'uploads';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
+      // Create FormData object to send the file and data
+      let formData = new FormData();
+      formData.append('video', fileInput.files[0]);
+      formData.append('title', titleInput.value.trim());
+      formData.append('about', descriptionInput.value.trim());
+      formData.append('categories', JSON.stringify(selectedCategories));
 
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    const filetypes = /mp4|avi|mov|wmv/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-    if (mimetype && extname) {
-      return cb(null, true);
+      // Send POST request to the server
+      fetch("/videos", {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to upload video. Please try again.');
+          }
+              // Check if the content type is JSON
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response.json(); // Parse JSON if it is a valid JSON response
     } else {
-      cb('Error: Videos Only!');
+        throw new Error('Server did not return JSON.');
     }
-  }
-});
-
-// Routes
-app.get('/', (req, res) => {
-  res.render('upload_new');
-});
-
-app.post('/upload', upload.single('video'), (req, res) => {
-  if (req.file) {
-    const title = req.body.title;
-    const about = req.body.about;
-    const categories = Array.isArray(req.body.category) ? req.body.category : [req.body.category];
-
-    // Here you would typically save this information to a database
-    console.log('Title:', title);
-    console.log('About:', about);
-    console.log('Categories:', categories);
-    console.log('Video filename:', req.file.filename);
-
-    res.send('Video uploaded successfully!');
-  } else {
-    res.status(400).send('No file uploaded or invalid file type.');
-  }
+      })
+      .then(data => {
+          alert('Video uploaded successfully!');
+          // Perform additional actions like redirecting, etc.
+          // Example: window.location.href = '/uploaded-videos';
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred during the upload: ' + error.message);
+      });
+  });
 });

@@ -256,10 +256,9 @@
 
     <!-- Template Main Javascript File -->
     <script src="../../main_css/nav_bar_css/js/main.js"></script>
-    <script src="../upload_vid_files/upload_back.js"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
     const uploadButton = document.querySelector('button.btn-outline-primary');
     const fileInput = document.querySelector('input[type="file"]');
     const titleInput = document.getElementById('e1');
@@ -307,7 +306,7 @@
         formData.append('categories', JSON.stringify(selectedCategories));
 
         // Send POST request to the server
-        fetch('/api/upload', {
+        fetch('/videos', {
             method: 'POST',
             body: formData
         })
@@ -329,6 +328,7 @@
 });
 
     </script>
+    <script src="../upload_vid_files/upload_back.js"></script>
 </body>
 
 </html>
