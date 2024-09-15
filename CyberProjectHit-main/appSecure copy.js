@@ -111,87 +111,11 @@ profileUtils.changeProfile(app, db);
 // End of Profile
 
 
-<<<<<<< Updated upstream
-// upload videos
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './public/html/upload_vid_files/uploads/');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const username = req.session.username;
-        cb(null, `${uniqueSuffix}+${username}${path.extname(file.originalname)}`);
-    }
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 2000000 }, // 2 MB limit
-    fileFilter: function(req, file, cb) {
-        checkFileType(file, cb);
-    }
-}).any();
-
-function checkFileType(file, cb) {
-    // Check file extension and mimetype
-    const fileType = /mp4$/i;
-    const extname = fileType.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = fileType.test(file.mimetype);
-    
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        cb("Please upload an MP4 file only.");
-    }
-}
-
-app.get('/upload_videos', async (req, res) => {
-    if (!req.session.username) {
-        return res.sendFile(path.join(__dirname, 'public/html/main', 'error.html')); // Show error page
-    }
-    const username = req.session.username;
-    const email = req.session.email;
-    return res.render(path.join(__dirname, 'public/html/profile_related', 'upload_new.ejs'));
-});
-
-app.post("/videos", (req, res) => {
-    upload(req, res, (err) => {
-        if (err instanceof multer.MulterError) {
-            // Handle multer errors (e.g., file too large)
-            if (err.code === "LIMIT_FILE_SIZE") {
-                return res.status(400).json({ message: "Video exceeds the limit of 2 MB." });
-            }
-            // Generic multer error
-            return res.status(500).json({ message: "Server error during upload." });
-        } else if (err) {
-            // Non-multer errors (e.g., invalid file type)
-            return res.status(400).json({ message: err });
-        }
-
-        // Handle the case when no file is provided
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ message: "Please select a video to upload." });
-        }
-
-        // If everything is OK
-        res.status(200).json({ message: "Upload successful", files: req.files });
-    });
-});
-
-
-// Set up multer for handling file uploads
-const uploads = multer({ dest: path.join(__dirname, 'public','html', 'upload_vid_files', 'uploads') });
-
-// Serve the uploads directory
-const uploadsDir = path.join(__dirname, 'public','html', 'upload_vid_files', 'uploads');
-app.use('/upload_vid_files/uploads', express.static(uploadsDir));
-=======
 //files page
 videoUtils.uploadFilesPage(app, db);
 // Handle video uploads
 videoUtils.checkFile(app, db);
 videoUtils.uploadFile(app, db);
->>>>>>> Stashed changes
 
 videoUtils.goToVideo(app, db);
 // Serve the video player HTML file
@@ -202,23 +126,11 @@ videoUtils.goToVideo(app, db);
 // Get the list of videos in the uploads folder
 videoUtils.getVideoList(app, db);
 
-<<<<<<< Updated upstream
-        // Filter out only video files (optional)
-        const videoFiles = files.filter(file => file.endsWith('.mp4'));
-
-        res.json(videoFiles);
-    });
-});
-
-// Handle video uploads
-
-=======
->>>>>>> Stashed changes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(400).json({ message: 'Upload failed', error: err.message });
+    res.status(500).send('Something broke!');
 });
 
 
