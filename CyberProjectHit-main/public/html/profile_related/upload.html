@@ -104,10 +104,10 @@
                 <a class="nav-link" href="/main">Streams</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/login">Sign In</a>
+                <a class="nav-link" href="/profile">Profile</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/register">Sign UP</a>
+                <a  class="nav-link" href="/logout">Logout</a>
               </li>
             </ul>
           </div>
@@ -134,7 +134,7 @@
     <!--/ Intro Single End /-->
 
     <!--/ News Grid Star /-->
-    <form id="upload-form" action="/api/upload" method="post" enctype="multipart/form-data">
+    <form id="upload-form" action="/videos" method="post" enctype="multipart/form-data">
         <section class="icon-wrap grid">
             <div class="container body">
                 <div class="input-div">
@@ -143,12 +143,15 @@
                      </div>
                     <input type="text" name="title" placeholder="Video Title" id="e1" class="form-control">
                  </div>
+<<<<<<< Updated upstream
                  <div class="input-div">
                     <div class="main-title">
                         <h6>About</h6>
                      </div>
                      <textarea rows="3" id="e2" name="about" class="form-control" placeholder="Description"></textarea>
                  </div>
+=======
+>>>>>>> Stashed changes
                  
                  <div class="input-div">
                     <div class="main-title">
@@ -163,53 +166,6 @@
                     </div>
                  </div>
                  <div class="row category-checkbox">
-                    <!-- checkbox 1col -->
-                    <div class="col-lg-2 col-xs-6 col-4">
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="customCheck1">
-                          <label class="custom-control-label" for="customCheck1">Abaft</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="customCheck2">
-                          <label class="custom-control-label" for="customCheck2">Brick</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="customCheck3">
-                          <label class="custom-control-label" for="customCheck3">Purpose</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="customCheck4">
-                          <label class="custom-control-label" for="customCheck4">Shallow</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="customCheck5">
-                          <label class="custom-control-label" for="customCheck5">Spray</label>
-                       </div>
-                    </div>
-                    <!-- checkbox 2col -->
-                    <div class="col-lg-2 col-xs-6 col-4">
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="zcustomCheck1">
-                          <label class="custom-control-label" for="zcustomCheck1">Cemetery</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="zcustomCheck2">
-                          <label class="custom-control-label" for="zcustomCheck2">Trouble</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="zcustomCheck3">
-                          <label class="custom-control-label" for="zcustomCheck3">Pin</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="zcustomCheck4">
-                          <label class="custom-control-label" for="zcustomCheck4">Fall</label>
-                       </div>
-                       <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="zcustomCheck5">
-                          <label class="custom-control-label" for="zcustomCheck5">Leg</label>
-                       </div>
-                    </div>
-                    <!-- checkbox 3col -->
                     <div class="col-lg-2 col-xs-6 col-4">
                        <div class="custom-control custom-checkbox">
                           <input type="checkbox" class="custom-control-input" id="czcustomCheck1">
@@ -236,7 +192,7 @@
             <div class="row" id="videoList">
             </div>
             </div>
-            <button type="submit" class="btn btn-primary">Upload</button>  
+            <button type="submit" class="btn btn-primary" id="upload">Upload</button>  
         </section>
       </form>
         
@@ -259,7 +215,7 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-    const uploadButton = document.querySelector('button.btn-outline-primary');
+    const uploadButton = document.getElementById('upload');
     const fileInput = document.querySelector('input[type="file"]');
     const titleInput = document.getElementById('e1');
     const descriptionInput = document.getElementById('e2');
@@ -267,22 +223,19 @@
 
     uploadButton.addEventListener('click', function(event) {
         event.preventDefault();
-
-        // Validate form fields
         if (!fileInput.files.length) {
             alert('Please select a video file.');
             return;
         }
-        if (!titleInput.value.trim()) {
+        if (titleInput.value.trim()=== '') {
             alert('Please enter a title for the video.');
             return;
         }
-        if (!descriptionInput.value.trim()) {
+        if (descriptionInput.value.trim()=== '') {
             alert('Please provide a description.');
             return;
         }
 
-        // Collect selected categories
         let selectedCategories = [];
         checkboxes.forEach(function(checkbox) {
             if (checkbox.checked) {
@@ -311,14 +264,16 @@
             body: formData
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to upload video. Please try again.');
-            }
+          if (!response.ok) {
+            // If the server returned an error, get the error message from the response
+            return response.json().then(error => {
+                throw new Error(error.message); // Throw the error message from the server
+            });
+          }
             return response.json();
         })
         .then(data => {
             alert('Video uploaded successfully!');
-            // Redirect or perform other actions as needed
         })
         .catch(error => {
             console.error('Error:', error);
@@ -328,7 +283,6 @@
 });
 
     </script>
-    <script src="../upload_vid_files/upload_back.js"></script>
 </body>
 
 </html>
