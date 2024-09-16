@@ -10,6 +10,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/video-player.css">
+
+
 
     <!-- Bootstrap CSS File -->
     <!-- To return to the original css delete the _copy --> 
@@ -102,11 +105,20 @@
       <section class="intro-single">
         <div class="container">
             <div class="row">
-                <div class="col-md-12 col-lg-8">
-                    <div class="title-single-box">
-                        <h1 class="title-single">Video Player</h1>
-                    </div>
-                </div>
+              <div class="col-md-12 col-lg-8">
+                <div class="video-player-container">
+                  <h1 class="title-single">Video Player</h1>
+                  <div class="video-controls">
+                      <button id="connect-button">Connect Wallet</button>
+                      <div class="tip-container">
+                          <span class="tip-label">Tip $</span>
+                          <input type="number" id="amount-input" value="1" min="1" step="0.5">
+                      </div>
+                      <button id="send-button">
+                          Send to <%= username %>
+                      </button>
+                  </div>
+              </div>
             </div>
         </div>
     </section>
@@ -239,10 +251,88 @@
                 console.error('Error:', error);
                 errorMessage.textContent = `Error loading videos: ${error.message}`;
             });
+            let account;
+document.getElementById('connect-button').addEventListener('click', event => {
+  let button = event.target;
+  ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
+    account = accounts[0];
+    console.log(account);
+    button.textContent = account;
+    ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(result => {
+      console.log(result);
+      let wei = parseInt(result, 16); 
+      let balance = wei / (10**18);
+      console.log(balance + " ETH");
+    });
+  });
+});
+
+document.getElementById('amount-input').addEventListener('input', event => {
+  let amount = event.target.value;
+  let sendButton = document.getElementById('send-button');
+  if (amount && !isNaN(amount) && amount > 0) {
+    sendButton.textContent = `Tip $${amount}`;
+    sendButton.disabled = false;
+  } else {
+    sendButton.textContent = 'Tip the Creator';
+    sendButton.disabled = true;
+  }
+});
+
+document.getElementById('send-button').addEventListener('click', event => {
+  let usdAmount = document.getElementById('amount-input').value;
+  getEthPrice().then(ethPrice => {
+    let ethAmount = usdAmount / ethPrice;
+    let weiValue = BigInt(Math.round(ethAmount * 10**18)).toString(16); // Corrected to use Math.round
+
+    let transactionParam = {
+      to: '0x45B6b39e1Cf8A6b4Ff2720f6BA0089d4574126E5',
+      from: account,
+      value: '0x' + weiValue
+    };
+
+    ethereum.request({method: 'eth_sendTransaction', params: [transactionParam]}).then(txhash => {
+      console.log(txhash);
+      checkTransactionconfirmation(txhash).then(r => alert(r));
+    });
+  });
+});
+
+function getEthPrice() {
+  return fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+    .then(response => response.json())
+    .then(data => data.ethereum.usd);
+}
+
+function checkTransactionconfirmation(txhash) {
+  let checkTransactionLoop = () => {
+    return ethereum.request({method:'eth_getTransactionReceipt', params:[txhash]}).then(r => {
+      if (r != null) return 'confirmed';
+      else return checkTransactionLoop();
+    });
+  };
+  return checkTransactionLoop();
+}
+
+let isConnected = false;
+
+document.getElementById("connect-button").addEventListener("click", () => {
+  isConnected = true;
+  alert("Connected!");
+});
+
+document.getElementById("send-button").addEventListener("click", () => {
+  if (!isConnected) {
+    alert("Please connect first.");
+  } else {
+    console.log("Sending data...");
+  }
+});
 
     </script>
 
     <!-- JavaScript Libraries -->
+     <script src="../../back_end\index.js"></script>
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
     <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>

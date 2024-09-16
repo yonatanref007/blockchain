@@ -1,0 +1,82 @@
+.video-player-container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.title-single {
+    color: #003366;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+.video-controls {
+    background: #f0f8ff;
+    border: 1px solid #003366;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+#connect-button, #send-button {
+    background: #003366;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 3px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#connect-button:hover, #send-button:hover {
+    background: #004080;
+}
+#connect-button:active, #send-button:active {
+    background: #002040;
+}
+#send-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+.tip-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #003366;
+    border-radius: 3px;
+    overflow: hidden;
+}
+#amount-input {
+    border: none;
+    padding: 10px;
+    width: 80px;
+    font-size: 1em;
+    -moz-appearance: textfield;
+}
+#amount-input::-webkit-outer-spin-button,
+#amount-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#amount-input:focus {
+    outline: none;
+}
+.tip-label {
+    background: #e6f2ff;
+    padding: 10px;
+    font-weight: bold;
+    color: #003366;
+}
+@media (max-width: 600px) {
+    .video-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .tip-container {
+        width: 100%;
+    }
+    #amount-input {
+        flex-grow: 1;
+    }
+}
