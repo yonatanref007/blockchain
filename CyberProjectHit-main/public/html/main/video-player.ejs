@@ -146,7 +146,8 @@
                 }
                 return response.json();
             })
-            .then(videos => {
+            .then(data => {
+              const videos = data.videoFiles;
                 const videoSrc = '<%= video %>';
                 const userSrc = '<%= username %>';
                 videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;

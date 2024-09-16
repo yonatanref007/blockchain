@@ -1,4 +1,8 @@
 const path = require('path'); // Make sure you require the necessary modules
+const crypto = require('crypto');
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('config.json'));
+const nodemailer = require('nodemailer');
 
 const getForgotPassPage = (app) => {
     app.get('/forgotpassword', async (req, res) => {
@@ -6,8 +10,15 @@ const getForgotPassPage = (app) => {
     });
 };
 
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // or any other email service
+    auth: {
+        user: 'israeltcg0@gmail.com',
+        pass: 'xrtwgoaxrmuzvghb'
+    }
+});
 
-const sendForgotPassRequest=(app)=>{
+const sendForgotPassRequest=(app, db)=>{
     app.post('/forgotPassword', async (req, res) => {
         const { email } = req.body;
     
@@ -60,7 +71,7 @@ const sendToResetPgae = (app) => {
     });
 };
 
-const resetPassword = (app) => {
+const resetPassword = (app, db) => {
     app.post('/resetPassword', async (req, res) => {
         const { token, newPassword, repeatPassword } = req.body;
     

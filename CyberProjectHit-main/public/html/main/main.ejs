@@ -38,32 +38,32 @@
             <div class="row">
               <div class="col-md-12 mb-2">
                 <div class="form-group">
-                  <label for="Type">Name</label>
-                  <input type="text" class="form-control form-control-lg form-control-a" placeholder="Keyword">
+                  <label for="Name">Name</label>
+                  <input type="text" id="Name" class="form-control form-control-lg form-control-a" placeholder="Keyword">
                 </div>
               </div>
               <div class="col-md-12 mb-2">
                 <div class="form-group">
                   <label for="Creator">Content Creator</label>
-                  <input type="text" class="form-control form-control-lg form-control-a" placeholder="Keyword">
+                  <input type="text" id="Creator" class="form-control form-control-lg form-control-a" placeholder="Keyword">
                 </div>
               </div>
               <div class="col-md-12 mb-2">
                 <div class="form-group">
                   <label for="Type">Type</label>
                   <select class="form-control form-control-lg form-control-a" id="Type">
-                    <option>Gaming</option>
-                    <option>Education</option>
-                    <option>Relax</option>
-                    <option>Music</option>
-                    <option>Fashion</option>
-                    <option>Cooking</option>
+                    <option value="">All</option>
+                    <option value="1">Shopify</option>
+                    <option value="2">Day trading</option>
+                    <option value="3">Gaming</option>
+                    <option value="4">Investing</option>
+                    <option value="5">Tech news</option>
                   </select>
                 </div>
               </div>
               
               <div class="col-md-12">
-                <button type="submit" class="btn btn-b">Search</button>
+                <button id="searchForm" type= "button" class="btn btn-b">Search</button>
               </div>
             </div>
           </form>
@@ -96,12 +96,21 @@
               <li class="nav-item">
                 <a class="nav-link active" href="/main">Streams</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/login">Sign In</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/register">Sign UP</a>
-              </li>
+              <% if (username) { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/profile">Profile</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/logout">Logout</a>
+                  </li>
+              <% } else { %>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/login">Sign In</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/register">Sign UP</a>
+                  </li>
+              <% } %>
             </ul>
           </div>
           <button type="button" class="btn btn-b-n navbar-toggle-box-collapse d-none d-md-block" data-toggle="collapse"
@@ -148,24 +157,68 @@
 
     <!-- Template Main Javascript File -->
     <script src="../../main_css/nav_bar_css/js/main.js"></script>
+
+      <script>
+        document.getElementById('searchForm').addEventListener('click', function(event) {
+          event.preventDefault(); // Prevent the default form submission behavior
+
+          const name = document.getElementById('Name').value;
+          const creator = document.getElementById('Creator').value;
+          const type = document.getElementById('Type').value;
+
+          // Build the query string
+          const queryString = new URLSearchParams({
+              Name: name,
+              Creator: creator,
+              Type: type
+          }).toString();
+          
+          // Redirect to the desired URL with the query parameters
+          window.location.href = `/main?${queryString}`;
+      });
+    </script>
     <script>
       const videoPlayer = document.getElementById('videoPlayer');
       const videoList = document.getElementById('videoList');
       const errorMessage = document.getElementById('errorMessage');
+      const numberToCategory = {
+          '1': 'Shopify',
+          '2': 'Day trading',
+          '3': 'Gaming',
+          '4': 'Investing',
+          '5': 'Tech news',
+      };
+
+      function getQueryStringFromUrl(url) {
+        const urlObj = new URL(url);
+        return urlObj.search;
+      }
+      const currentUrl = window.location.href;
+      const queryString = getQueryStringFromUrl(currentUrl);
       // Fetch the list of videos from the server
-      fetch('/api/videos')
+      fetch(`/api/videos${queryString}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
-            .then(videos => {
-                if (videos.length === 0) {
+            .then(data => {
+                const videoFiles = data.videoFiles || []; 
+                const videoInfo = data.videoInfo || [];
+                if (videoFiles.length === 0) {
                     errorMessage.textContent = 'No videos found in the uploads directory.';
                     return;
                 }
-                videos.forEach(video => {
+                var filePosition = 0
+                videoFiles.forEach(video => {
+                    for(let i = 0; i<videoInfo.length; i++)
+                    {
+                      if (video === videoInfo[i].name){
+                        filePosition = i
+                        break;
+                      }                        
+                    }
                     const col3 = document.createElement('div');
                     col3.className = 'col-md-3';
 
@@ -201,20 +254,28 @@
 
                     const titleH2 = document.createElement('h2');
                     titleH2.className = 'title-2';
-
                     const titleLink = document.createElement('a');
-                    titleLink.innerHTML = 'Travel is comming<br> new';
+                    titleLink.innerHTML = `${videoInfo[filePosition].title}`;
 
                     titleH2.appendChild(titleLink);
-
                     cardTitleB.appendChild(titleH2);
 
                     const cardDate = document.createElement('div');
                     cardDate.className = 'card-date';
-
+                    
+                    var categories = ''
+                    const categoryArray = videoInfo[filePosition].category
+                    for(let i = 0; i<categoryArray.length; i++)
+                    {
+                      if (i === categoryArray.length-1){
+                        categories += `${numberToCategory[categoryArray[i]]}`
+                        break;
+                      }
+                      else{categories += `${numberToCategory[categoryArray[i]]}, `}
+                    }
                     const dateSpan = document.createElement('span');
                     dateSpan.className = 'date-b';
-                    dateSpan.textContent = '18 Sep. 2017';
+                    dateSpan.textContent = `${categories}`;
 
                     cardDate.appendChild(dateSpan);
 

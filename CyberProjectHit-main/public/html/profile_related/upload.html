@@ -143,16 +143,13 @@
                      </div>
                     <input type="text" name="title" placeholder="Video Title" id="e1" class="form-control">
                  </div>
-<<<<<<< Updated upstream
                  <div class="input-div">
                     <div class="main-title">
                         <h6>About</h6>
                      </div>
                      <textarea rows="3" id="e2" name="about" class="form-control" placeholder="Description"></textarea>
                  </div>
-=======
->>>>>>> Stashed changes
-                 
+
                  <div class="input-div">
                     <div class="main-title">
                         <h6>Video File</h6>
@@ -162,30 +159,30 @@
                 <div class="input-div"></div>
                 <div class="row ">
                     <div class="col-lg-12">
-                          <h6>Category ( you can select upto 6 categories )</h6>
+                          <h6>Category ( you can select upto 3 categories )</h6>
                     </div>
                  </div>
                  <div class="row category-checkbox">
                     <div class="col-lg-2 col-xs-6 col-4">
                        <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="czcustomCheck1">
-                          <label class="custom-control-label" for="czcustomCheck1">Scissors</label>
+                          <input type="checkbox" class="custom-control-input" id="czcustomCheck1" value="1">
+                          <label class="custom-control-label" for="czcustomCheck1">Shopify</label>
                        </div>
                        <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="czcustomCheck2">
-                          <label class="custom-control-label" for="czcustomCheck2">Stitch</label>
+                          <input type="checkbox" class="custom-control-input" id="czcustomCheck2" value="2">
+                          <label class="custom-control-label" for="czcustomCheck2">Day trading</label>
                        </div>
                        <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="czcustomCheck3">
-                          <label class="custom-control-label" for="czcustomCheck3">Agonizing</label>
+                          <input type="checkbox" class="custom-control-input" id="czcustomCheck3" value="3">
+                          <label class="custom-control-label" for="czcustomCheck3">Gaming</label>
                        </div>
                        <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="czcustomCheck4">
-                          <label class="custom-control-label" for="czcustomCheck4">Rescue</label>
+                          <input type="checkbox" class="custom-control-input" id="czcustomCheck4" value="4">
+                          <label class="custom-control-label" for="czcustomCheck4">Investing</label>
                        </div>
                        <div class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="czcustomCheck5">
-                          <label class="custom-control-label" for="czcustomCheck5">Quiet</label>
+                          <input type="checkbox" class="custom-control-input" id="czcustomCheck5" value="5">
+                          <label class="custom-control-label" for="czcustomCheck5">Tech news</label>
                        </div>
                     </div>
                 </div>    
@@ -236,18 +233,18 @@
             return;
         }
 
-        let selectedCategories = [];
+        let selectedCategories = '';
         checkboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                selectedCategories.push(checkbox.labels[0].innerText);
-            }
+          if (checkbox.checked) {
+              selectedCategories += checkbox.value;
+          }
         });
 
         if (selectedCategories.length === 0) {
             alert('Please select at least one category.');
             return;
-        } else if (selectedCategories.length > 6) {
-            alert('You can select up to 6 categories only.');
+        } else if (selectedCategories.length > 3) {
+            alert('You can select up to 3 categories only.');
             return;
         }
 
@@ -256,8 +253,7 @@
         formData.append('video', fileInput.files[0]);
         formData.append('title', titleInput.value.trim());
         formData.append('description', descriptionInput.value.trim());
-        formData.append('categories', JSON.stringify(selectedCategories));
-
+        formData.append('categories',selectedCategories);
         // Send POST request to the server
         fetch('/videos', {
             method: 'POST',
@@ -265,15 +261,15 @@
         })
         .then(response => {
           if (!response.ok) {
-            // If the server returned an error, get the error message from the response
             return response.json().then(error => {
-                throw new Error(error.message); // Throw the error message from the server
+                throw new Error(error.message);
             });
           }
             return response.json();
         })
         .then(data => {
             alert('Video uploaded successfully!');
+            window.location.href = "main"
         })
         .catch(error => {
             console.error('Error:', error);

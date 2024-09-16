@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const app = express();
 const path = require('path');
 const { Client } = require('pg');
-const nodemailer = require('nodemailer');
+
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const util = require('util')
@@ -21,13 +21,7 @@ const config = JSON.parse(fs.readFileSync('config.json'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 // Setup email transporter
-const transporter = nodemailer.createTransport({
-    service: 'Gmail', // or any other email service
-    auth: {
-        user: 'israeltcg0@gmail.com',
-        pass: 'Israel1948'
-    }
-});
+
 
 // Generate a random secret key
 const secretKey = crypto.randomBytes(128).toString('hex');
@@ -88,8 +82,7 @@ RegisterUtils.postRgister(app, db)
 
 
 //Start of main
-mainUtils.main(app);
-mainUtils.registeredmain(app);
+mainUtils.main(app, db);
 mainUtils.about(app);
 //End of main
 
