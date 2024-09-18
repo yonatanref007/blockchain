@@ -16,6 +16,8 @@ const passwordUtils = require("./back_end/resetPassword.js")
 const profileUtils = require("./back_end/Profie.js")
 const mainUtils = require("./back_end/main.js")
 const videoUtils = require("./back_end/video.js")
+const apiUtils = require("./back_end/api.js")
+const adminUtils = require("./back_end/admin.js")
 // Loading configuration file
 const config = JSON.parse(fs.readFileSync('config.json'));
 
@@ -111,7 +113,7 @@ videoUtils.checkFile(app, db);
 videoUtils.goToVideo(app, db);
 
 // Get the list of videos in the uploads folder
-videoUtils.getVideoList(app, db);
+apiUtils.getVideoList(app, db);
 
 
 // Error handling middleware
@@ -119,8 +121,10 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
-
-
-
 videoUtils.deleteVideo(app, db)
 
+// Admin permisions
+adminUtils.check_profiles(app, db);
+adminUtils.check_videos(app, db);
+apiUtils.getUserList(app, db);
+apiUtils.deleteUserList(app, db);

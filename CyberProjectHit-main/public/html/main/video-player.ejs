@@ -96,10 +96,6 @@
               </li>
             </ul>
           </div>
-          <button type="button" class="btn btn-b-n navbar-toggle-box-collapse d-none d-md-block" data-toggle="collapse"
-            data-target="#navbarTogglerDemo01" aria-expanded="false">
-            <span class="fa fa-search" aria-hidden="true"></span>
-          </button>
         </div>
       </nav>
       <section class="intro-single">
@@ -107,7 +103,7 @@
             <div class="row">
               <div class="col-md-12 col-lg-8">
                 <div class="video-player-container">
-                  <h1 class="title-single">Video Player</h1>
+                  <h1 class="title-single" id="title-single">Video Player</h1>
                   <div class="video-controls">
                       <button id="connect-button">Connect Wallet</button>
                       <div class="tip-container">
@@ -137,7 +133,13 @@
         const videoPlayer = document.getElementById('videoPlayer');
         const videoList = document.getElementById('videoList');
         const errorMessage = document.getElementById('errorMessage');
-
+        const numberToCategory = {
+          '1': 'Shopify',
+          '2': 'Day trading',
+          '3': 'Gaming',
+          '4': 'Investing',
+          '5': 'Tech news',
+        };
         // Fetch the list of videos from the server
         fetch('/api/videos')
             .then(response => {
@@ -147,9 +149,20 @@
                 return response.json();
             })
             .then(data => {
-              const videos = data.videoFiles;
+                const videos = data.videoFiles || [];
+                const videoInfo = data.videoInfo || [];
+                const title = document.getElementById('title-single');
+                var filePosition = 0
                 const videoSrc = '<%= video %>';
                 const userSrc = '<%= username %>';
+                for(let i = 0; i<videoInfo.length; i++)
+                    {
+                      if (videoSrc === videoInfo[i].name){
+                        filePosition = i
+                        break;
+                      }                        
+                    }
+                title.textContent = `${videoInfo[filePosition].title}`
                 videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;
                 videoPlayer.play()
                 if (videos.length === 0) {
@@ -193,7 +206,14 @@
                       titleH2.className = 'title-2';
 
                       const titleLink = document.createElement('a');
-                      titleLink.innerHTML = 'Travel is comming<br> new';
+                      for(let i = 0; i<videoInfo.length; i++)
+                      {
+                      if (video === videoInfo[i].name){
+                        filePosition = i
+                        break;
+                       }                        
+                      }
+                      titleLink.innerHTML = `${videoInfo[filePosition].title}`;
 
                       titleH2.appendChild(titleLink);
 
@@ -202,9 +222,20 @@
                       const cardDate = document.createElement('div');
                       cardDate.className = 'card-date';
 
+
+                      var categories = ''
+                      const categoryArray = videoInfo[filePosition].category
+                      for(let i = 0; i<categoryArray.length; i++)
+                        {
+                          if (i === categoryArray.length-1){
+                            categories += `${numberToCategory[categoryArray[i]]}`
+                            break;
+                          }
+                          else{categories += `${numberToCategory[categoryArray[i]]}, `}
+                        }
                       const dateSpan = document.createElement('span');
                       dateSpan.className = 'date-b';
-                      dateSpan.textContent = '18 Sep. 2017';
+                      dateSpan.textContent = `${categories}`;
 
                       cardDate.appendChild(dateSpan);
 

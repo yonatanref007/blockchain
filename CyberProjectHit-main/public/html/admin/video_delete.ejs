@@ -94,7 +94,7 @@
                 <a class="nav-link" href="/about">About</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/main">Streams</a>
+                <a class="nav-link" href="/main">Streams</a>
               </li>
               <% if (username) { %>
                   <li class="nav-item">
@@ -144,6 +144,27 @@
         </section>
     <!--/ News Grid End /-->
 
+    <!--/ Hidden window /-->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Video</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete <span id="videoToDelete"></span>?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- JavaScript Libraries -->
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
@@ -174,7 +195,7 @@
           }).toString();
           
           // Redirect to the desired URL with the query parameters
-          window.location.href = `/main?${queryString}`;
+          window.location.href = `/check_videos?${queryString}`;
       });
     </script>
     <script>
@@ -245,10 +266,12 @@
                     const parts = video.split('+');
                     const username = parts[parts.length - 1];
 
-                    categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
-                    categoryLink.textContent = 'Play';
+                    categoryLink.textContent = 'Delete';
+                    categoryLink.style = "background-color: red;";
+                    categoryLink.href ="#"
                     cardCategoryB.appendChild(categoryLink);
-
+                    
+                    
                     const cardTitleB = document.createElement('div');
                     cardTitleB.className = 'card-title-b';
 
@@ -309,7 +332,32 @@
                         i *= -1
                       }
                     }
+                    categoryLink.onclick = () => {
+                        i = 1
+                        const videoToDelete = document.getElementById('videoToDelete');
+                        videoToDelete.textContent = videoInfo[filePosition].title;
 
+                        $('#deleteConfirmationModal').modal('show');
+
+                        document.getElementById('confirmDeleteButton').onclick = async () => {
+                            try {
+                                const response = await fetch(`/videos/${videoInfo[filePosition].name}`, {
+                                    method: 'DELETE',
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(`Failed to delete video: ${videoInfo[filePosition].name}`);
+                                }
+                                $('#deleteConfirmationModal').modal('hide');
+                                alert(`Video ${videoInfo[filePosition].title} deleted successfully!`);
+                                location.reload();
+
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert(`Error deleting video: ${error.message}`);
+                            }
+                        };
+                    };
                     vidbox.appendChild(videoElement);
                     cardbox.appendChild(vidbox);
                     cardbox.appendChild(cardOverlay);

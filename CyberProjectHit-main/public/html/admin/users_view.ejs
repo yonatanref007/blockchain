@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+
+    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/video-player.css">
+    <!-- Bootstrap CSS File -->
+    <!-- To return to the original css delete the _copy --> 
+    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+
+    <!-- Main Stylesheet File -->
+    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+
+    <!-- bootstrap Stylesheet link -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<style>
+  .card {
+        box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+    }
+  .avatar.sm {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: .818125rem;
+    }
+  .table-nowrap .table td, .table-nowrap .table th {
+        white-space: nowrap;
+    }
+  .table>:not(caption)>*>* {
+        padding: 0.75rem 1.25rem;
+        border-bottom-width: 1px;
+    }
+  table th {
+        font-weight: 600;
+        background-color: #eeecfd !important;
+    }
+</style>
+<body>
+    <nav class="navbar navbar-default navbar-trans navbar-expand-lg fixed-top">
+        <div class="container">
+          <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault"
+            aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <a class="navbar-brand text-brand" href="/">Block<span class="color-b">Chain</span></a>
+          <button type="button" class="btn btn-link nav-search navbar-toggle-box-collapse d-md-none" data-toggle="collapse"
+            data-target="#navbarTogglerDemo01" aria-expanded="false">
+            <span class="fa fa-search" aria-hidden="true"></span>
+          </button>
+          <div class="navbar-collapse collapse justify-content-center" id="navbarDefault">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/main">Streams</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/profile" id="profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container" style="margin-top: 200px;">
+          <div class="row">
+              <div class="col-12 mb-3 mb-lg-5">
+                  <div class="overflow-hidden card table-nowrap table-card">
+
+                      <div class="table-responsive">
+                          <table class="table mb-0">
+                              <thead class="small text-uppercase bg-body text-muted">
+                                  <tr>
+                                      <th>Username</th>
+                                      <th>Firstname</th>
+                                      <th>Lastname</th>
+                                      <th>Email</th>
+                                      <th>Metamask</th>
+                                      <th>Blocked</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="main_body">
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+      </div>
+      <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Delete User</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete <span id="usernameToDelete"></span>?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <!-- Contact Form JavaScript File -->
+    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <!-- Template Main Javascript File -->
+    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+
+    <script>
+      fetch('/api/users')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(userInfo => {
+              const users = userInfo;
+                if (users.length === 0) {
+                    return;
+                }
+                users.forEach(user => {
+                  const tableRow = document.createElement('tr');
+                  tableRow.className = 'align-middle';
+                  tableRow.onclick = () => {
+                      const usernameToDelete = document.getElementById('usernameToDelete');
+                      usernameToDelete.textContent = user.username;
+                      $('#deleteConfirmationModal').modal('show');
+                      document.getElementById('confirmDeleteButton').onclick = async () => {
+                          try {
+                              const response = await fetch('/api/users', {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({ username: user.username })
+                              });
+                              if (!response.ok) {
+                                  throw new Error(`Failed to delete user: ${user.username}`);
+                              }
+
+                              $('#deleteConfirmationModal').modal('hide');
+                              alert(`User ${user.username} deleted successfully!`);
+                              location.reload();
+                          } catch (error) {
+                              console.error('Error:', error);
+                              alert(`Error deleting user: ${error.message}`);
+                          }
+                      };
+                  };
+
+                  const usernameTd = document.createElement('td');
+                  usernameTd.innerText = user.username;
+                  tableRow.appendChild(usernameTd);
+
+                  const firstnameTd = document.createElement('td');
+                  firstnameTd.innerText = user.firstname;
+                  tableRow.appendChild(firstnameTd);
+
+                  const lastnameTd = document.createElement('td');
+                  lastnameTd.innerText = user.lastname;
+                  tableRow.appendChild(lastnameTd);
+
+                  const emailTd = document.createElement('td');
+                  emailTd.innerText = user.email;
+                  tableRow.appendChild(emailTd);
+
+                  const metamaskTd = document.createElement('td');
+                  metamaskTd.innerText = user.metamask;
+                  tableRow.appendChild(metamaskTd);
+
+                  const blockedTd = document.createElement('td');
+                  blockedTd.innerText = user.blocked;
+                  tableRow.appendChild(blockedTd);
+
+                  document.querySelector('tbody').appendChild(tableRow);
+
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error loading videos: ${error.message}`;
+            });
+    </script>
+</body>
+</html>

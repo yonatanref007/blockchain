@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 3000000 }, // 3 MB limit
+    limits: { fileSize: 2000000 }, // 2 MB limit
     fileFilter: function(req, file, cb) {
         checkFileType(file, cb);
     }
@@ -39,46 +39,6 @@ function checkFileType(file, cb) {
 
 // Set up multer for handling file uploads
 const uploads = multer({ dest: uploadPath });
-
-const getVideoList = (app, db) => {
-    app.get('/api/videos', async (req, res) => {
-        try {
-            const name = req.query.Name;
-            const creator = req.query.Creator;
-            const category = req.query.Type;
-
-            const files = await fs.promises.readdir(uploadPath);
-            const allVideoFiles = files.filter(file => file.endsWith('.mp4'));
-
-            let query = 'SELECT * FROM video WHERE 1=1';
-            const params = [];
-
-            if (name && name !== '') {
-                query += ` AND LOWER(title) LIKE $${params.length + 1}`;
-                params.push(`%${name.toLowerCase()}%`);
-            }
-
-            if (creator && creator !== '') {
-                query += ` AND LOWER(username) LIKE $${params.length + 1}`;
-                params.push(`%${creator.toLowerCase()}%`);
-            }
-
-            if (category && category !== '') {
-                query += ` AND category LIKE $${params.length + 1}`;
-                params.push(`%${category}%`);
-            }
-
-            const result = await db.query(query, params);
-            const videoInfo = result.rows;
-            const videoNames = videoInfo.map(video => video.name);
-            const filteredVideoFiles = allVideoFiles.filter(file => videoNames.includes(file));
-            res.json({ videoFiles: filteredVideoFiles, videoInfo: videoInfo });
-        } catch (err) {
-            console.error('Error:', err);
-            res.status(500).send('Internal Server Error');
-        }
-    });
-};
 
 const uploadFilesPage = (app) => {
     app.get('/videos', async (req, res) => {
@@ -147,7 +107,6 @@ const deleteVideo = (app) => {
 
 // End of Login
 module.exports = {
-    getVideoList,
     uploadFilesPage,
     checkFile,
     goToVideo,

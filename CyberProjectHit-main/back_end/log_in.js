@@ -29,6 +29,7 @@ const tryLogin=(app, db)=>{
             req.session.username = username;
             req.session.loggedIn = true;
             req.session.email = result.rows[0].email;
+            req.session.admin = result.rows[0].admin;
             res.status(200).send('');
         } catch (error) {
             console.error('Error logging in:', error);

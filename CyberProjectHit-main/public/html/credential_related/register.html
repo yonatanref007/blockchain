@@ -117,6 +117,7 @@
 
     <!-- MetaMask Integration and Form Submission -->
     <script>
+        let account;
         document.addEventListener('DOMContentLoaded', () => {
             const connectButton = document.getElementById('connect-button');
             const registerForm = document.getElementById('registerForm');
@@ -124,9 +125,11 @@
             const statusMessage = document.getElementById('statusMessage');
             let isConnected = false;
 
-            const updateUIOnConnection = (account) => {
+            const updateUIOnConnection = (accounts) => {
                 isConnected = true;
-                connectButton.textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+                account = accounts
+                console.log(account)
+                connectButton.textContent = `Connected: ${accounts.slice(0, 6)}...${accounts.slice(-4)}`;
                 connectButton.classList.remove('btn-primary');
                 connectButton.classList.add('btn-success');
                 connectionMessage.classList.add('d-none');
@@ -152,9 +155,7 @@
                 if (typeof window.ethereum !== 'undefined') {
                     try {
                         const accounts = await ethereum.request({method: 'eth_requestAccounts'});
-                        const account = accounts[0];
-                        console.log('Connected account:', account);
-                        updateUIOnConnection(account);
+                        updateUIOnConnection(accounts[0]);
                     } catch (error) {
                         console.error('Failed to connect:', error);
                         connectButton.textContent = 'Connection failed';
@@ -173,6 +174,7 @@
                 }
 
                 const formData = new FormData(registerForm);
+                formData.append('metamask', account)
                 try {
                     const response = await fetch('/register', {
                         method: 'POST',

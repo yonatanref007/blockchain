@@ -1,5 +1,27 @@
 const path = require('path'); // Make sure you require the necessary modules
 const dirpath = path.join(__dirname, '../public/html/main')
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('config.json'));
+const crypto = require('crypto');
+// Load dictionarty file
+
+const dictionary = fs.readFileSync(config.password.dictionaryPath,'utf8').split('\n');
+
+function isPasswordComplex(password) {
+    const { minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecialCharacters, requireDictionaryProtection } = config.password;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const existInDictionary = !dictionary.includes(password);
+
+    return password.length >= minLength &&
+           (!requireUppercase || hasUppercase) &&
+           (!requireLowercase || hasLowercase) &&
+           (!requireNumbers || hasNumbers) &&
+           (!requireDictionaryProtection || existInDictionary) &&
+           (!requireSpecialCharacters || hasSpecial);
+}
 
 const ProfilePage = (app) => {
     app.get('/profile', async (req, res) => {
@@ -25,7 +47,7 @@ const editProfilePage = (app) => {
 };
 
 
-const changeProfile=(app)=>{
+const changeProfile=(app, db)=>{
     app.post('/editprofile', async (req, res) => {
         if (!req.session.username) {
             return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));

@@ -14,8 +14,7 @@ const getRegisterPage = (app) => {
 
 const postRgister=(app, db)=>{
     app.post('/register', async (req, res) => {
-        const { username, firstname, lastname, email, password, repeatPassword } = req.body;
-    
+        const { username, firstname, lastname, email, password, repeatPassword, metamask } = req.body;
         try {
             if (!username || !firstname || !lastname || !email || !password || !repeatPassword) {
                 return res.status(400).send('All fields are required');
@@ -41,9 +40,9 @@ const postRgister=(app, db)=>{
     
             const { salt, hash } = hashPassword(password);
     
-            const query = `INSERT INTO users (username, firstname, lastname, email, password, salt) 
-                           VALUES ($1, $2, $3, $4, $5, $6)`;
-            await db.query(query, [username, firstname, lastname, email, hash, salt]);
+            const query = `INSERT INTO users (username, firstname, lastname, email, password, salt, metamask) 
+                           VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+            await db.query(query, [username, firstname, lastname, email, hash, salt, metamask]);
     
             const passwordHistory = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
             await db.query(passwordHistory, [username, hash]);

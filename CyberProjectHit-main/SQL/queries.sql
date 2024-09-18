@@ -9,7 +9,9 @@ CREATE TABLE users (
     reset_token VARCHAR(255),
     reset_token_expiry TIMESTAMP,
     salt VARCHAR(255),
-    metamask VARCHAR(255)
+    metamask VARCHAR(255),
+    blocked BOOLEAN DEFAULT FALSE
+    admin BOOLEAN DEFAULT FALSE
 );
 
 -- Items table creation --
