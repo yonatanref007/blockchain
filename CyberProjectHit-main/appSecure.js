@@ -56,10 +56,11 @@ app.use('/upload_vid_files/uploads', express.static(uploadsDir));
 // Database connection
 const db = new Client({
     user: "postgres",
-    host: "localhost",
-    database: "postgres",
-    password: "123456",
-    port: 5432,
+    host: "autorack.proxy.rlwy.net",  // Replace with the correct Railway host
+    database: "railway",              // Replace with the correct database name
+    password: "wcIioPscrEuExGVPwbToCJFAIHyBkFQG",         // Replace with your actual password
+    port: 44177,                      // Use the correct port from Railway
+    ssl: { rejectUnauthorized: false } // Required for SSL
 });
 
 db.connect((err) => {
