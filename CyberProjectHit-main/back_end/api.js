@@ -74,7 +74,7 @@ const deleteUserList = (app, db) => {
         }
     });
 };
-// End of Login
+
 module.exports = {
     getVideoList,
     getUserList,

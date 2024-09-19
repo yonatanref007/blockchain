@@ -75,19 +75,19 @@ const checkFile=(app, db)=>{
 const goToVideo = (app, db) => {
     app.get('/video-player', async (req, res) => {
         const video = req.query.video;
-        const username = req.query.username;
-        ///const meta = await db.query("SELECT metamask FROM users WHERE username = $1", [username]);
-        ///const { metamask } = meta.rows[0];
-    
+        const usertag = req.query.username;
+        const user = await db.query("SELECT username FROM video WHERE name = $1", [video]);
+        const { username } = user.rows[0];
+        const meta = await db.query("SELECT metamask FROM users WHERE username = $1", [username]);
+        const { metamask } = meta.rows[0];
         ///const result = await db.query("SELECT description, category FROM video WHERE name = $1", [video]);
         ///const { description, category} = result.rows[0];
         res.render('html/main/video-player', { 
             session: req.session, 
             video: video, 
+            usersrc: usertag,
+            metamask: metamask,
             username: username
-            ///metamask: metamask,
-            ///description: description,
-            ///category: category
         });
     });
 };

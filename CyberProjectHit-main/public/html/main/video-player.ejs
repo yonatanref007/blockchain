@@ -82,7 +82,7 @@
                 <a class="nav-link" href="/about">About</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/main">Streams</a>
+                <a class="nav-link" href="/main">Streams</a>
               </li>
               <li class="nav-item">
                 <% if (!session.username) { %>
@@ -154,7 +154,7 @@
                 const title = document.getElementById('title-single');
                 var filePosition = 0
                 const videoSrc = '<%= video %>';
-                const userSrc = '<%= username %>';
+                const userSrc = '<%= usersrc %>';
                 for(let i = 0; i<videoInfo.length; i++)
                     {
                       if (videoSrc === videoInfo[i].name){
@@ -318,7 +318,7 @@ document.getElementById('send-button').addEventListener('click', event => {
     let weiValue = BigInt(Math.round(ethAmount * 10**18)).toString(16); // Corrected to use Math.round
 
     let transactionParam = {
-      to: '0x45B6b39e1Cf8A6b4Ff2720f6BA0089d4574126E5',
+      to: '<%= metamask %>',
       from: account,
       value: '0x' + weiValue
     };
