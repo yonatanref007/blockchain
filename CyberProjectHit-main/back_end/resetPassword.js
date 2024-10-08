@@ -44,7 +44,7 @@ const sendForgotPassRequest=(app, db)=>{
                 subject: 'Password Reset',
                 text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
                       `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
-                      `http://${req.headers.host}/reset/${token}\n\n` +
+                      `https://${req.headers.host}/reset/${token}\n\n` +
                       `If you did not request this, please ignore this email and your password will remain unchanged.\n`
             };
     
@@ -67,7 +67,7 @@ const sendForgotPassRequest=(app, db)=>{
 const sendToResetPgae = (app) => {
     app.get('/reset/:token', (req, res) => {
         const token = req.params.token;
-        res.render('../html/credential_related/resetpassword', { token });
+        res.render('../public/html/credential_related/resetpassword', { token });
     });
 };
 
@@ -114,7 +114,7 @@ const resetPassword = (app, db) => {
             await db.query(query, [username, newHash]);
             // end of Password history
     
-            await db.query("UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE username = $2", [newPassword, username]);
+            await db.query("UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE username = $2", [newHash, username]);
     
             res.status(200).send('Password has been reset successfully');
         } catch (error) {

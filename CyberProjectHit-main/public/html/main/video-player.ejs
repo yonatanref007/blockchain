@@ -4,29 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-
     <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="stylesheet" href="/css/video-player.css">
-
-
-
-    <!-- Bootstrap CSS File -->
-    <!-- To return to the original css delete the _copy --> 
     <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
-
-    <!-- Libraries CSS Files -->
     <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
     <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
-
-
-    <!-- Main Stylesheet File -->
     <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <title>Video Player</title>
     <style>
         .card-box-b::before {
@@ -97,24 +84,25 @@
             </ul>
           </div>
         </div>
-      </nav>
-      <section class="intro-single">
+    </nav>
+    <section class="intro-single">
         <div class="container">
             <div class="row">
-              <div class="col-md-12 col-lg-8">
-                <div class="video-player-container">
-                  <h1 class="title-single" id="title-single">Video Player</h1>
-                  <div class="video-controls">
-                      <button id="connect-button">Connect Wallet</button>
-                      <div class="tip-container">
-                          <span class="tip-label">Tip $</span>
-                          <input type="number" id="amount-input" value="1" min="1" step="0.5">
-                      </div>
-                      <button id="send-button">
-                          Send to <%= username %>
-                      </button>
-                  </div>
-              </div>
+                <div class="col-md-12 col-lg-8">
+                    <div class="video-player-container">
+                        <h1 class="title-single" id="title-single">Video Player</h1>
+                        <div class="video-controls">
+                            <button id="connect-button" >Connect Wallet</button>
+                            <div class="tip-container">
+                                <span class="tip-label">Tip $</span>
+                                <input type="number" id="amount-input" value="1" min="1" step="0.5">
+                            </div>
+                            <button id="send-button" disabled>
+                                Send to <%= username %>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -130,241 +118,223 @@
     <div id="errorMessage" class="error"></div>
 
     <script>
-        const videoPlayer = document.getElementById('videoPlayer');
-        const videoList = document.getElementById('videoList');
-        const errorMessage = document.getElementById('errorMessage');
-        const numberToCategory = {
+      const videoPlayer = document.getElementById('videoPlayer');
+      const videoList = document.getElementById('videoList');
+      const errorMessage = document.getElementById('errorMessage');
+      const numberToCategory = {
           '1': 'Shopify',
           '2': 'Day trading',
           '3': 'Gaming',
           '4': 'Investing',
           '5': 'Tech news',
-        };
-        // Fetch the list of videos from the server
-        fetch('/api/videos')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const videos = data.videoFiles || [];
-                const videoInfo = data.videoInfo || [];
-                const title = document.getElementById('title-single');
-                var filePosition = 0
-                const videoSrc = '<%= video %>';
-                const userSrc = '<%= usersrc %>';
-                for(let i = 0; i<videoInfo.length; i++)
-                    {
-                      if (videoSrc === videoInfo[i].name){
-                        filePosition = i
-                        break;
-                      }                        
-                    }
-                title.textContent = `${videoInfo[filePosition].title}`
-                videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;
-                videoPlayer.play()
-                if (videos.length === 0) {
-                    errorMessage.textContent = 'No videos found in the uploads directory.';
-                    return;
-                }
-                videos.forEach(video => {
-                  if(video != videoSrc){
-                    const parts = video.split('+');
-                    const username = parts[parts.length - 1];
-                    if(username === userSrc){
-                      const col3 = document.createElement('div');
-                      col3.className = 'col-md-3';
+      };
 
-                      const cardbox = document.createElement('div');
-                      cardbox.className = 'card-box-b card-shadow news-box';
-                      
-                      const vidbox = document.createElement('div');
-                      vidbox.className = 'img-box-b';
-
-                      const cardOverlay = document.createElement('div');
-                      cardOverlay.className = 'card-overlay';
-
-                      const cardHeaderB = document.createElement('div');
-                      cardHeaderB.className = 'card-header-b';
-
-                      const cardCategoryB = document.createElement('div');
-                      cardCategoryB.className = 'card-category-b';
-
-                      const categoryLink = document.createElement('a');
-                      categoryLink.className = 'category-b';
-
-                      categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
-                      categoryLink.textContent = 'Play';
-                      cardCategoryB.appendChild(categoryLink);
-
-                      const cardTitleB = document.createElement('div');
-                      cardTitleB.className = 'card-title-b';
-
-                      const titleH2 = document.createElement('h2');
-                      titleH2.className = 'title-2';
-
-                      const titleLink = document.createElement('a');
-                      for(let i = 0; i<videoInfo.length; i++)
-                      {
-                      if (video === videoInfo[i].name){
-                        filePosition = i
-                        break;
-                       }                        
-                      }
-                      titleLink.innerHTML = `${videoInfo[filePosition].title}`;
-
-                      titleH2.appendChild(titleLink);
-
-                      cardTitleB.appendChild(titleH2);
-
-                      const cardDate = document.createElement('div');
-                      cardDate.className = 'card-date';
-
-
-                      var categories = ''
-                      const categoryArray = videoInfo[filePosition].category
-                      for(let i = 0; i<categoryArray.length; i++)
-                        {
-                          if (i === categoryArray.length-1){
-                            categories += `${numberToCategory[categoryArray[i]]}`
-                            break;
-                          }
-                          else{categories += `${numberToCategory[categoryArray[i]]}, `}
-                        }
-                      const dateSpan = document.createElement('span');
-                      dateSpan.className = 'date-b';
-                      dateSpan.textContent = `${categories}`;
-
-                      cardDate.appendChild(dateSpan);
-
-                      cardHeaderB.appendChild(cardCategoryB);
-                      cardHeaderB.appendChild(cardTitleB);
-                      cardHeaderB.appendChild(cardDate);
-
-                      cardOverlay.appendChild(cardHeaderB);
-
-                      const videoElement = document.createElement('video');
-                      videoElement.src = `/upload_vid_files/uploads/${video}`;
-
-                      const canvas = document.createElement('canvas');
-                      const context = canvas.getContext('2d');
-
-                      videoElement.addEventListener('loadeddata', () => {
-                          canvas.width = videoElement.videoWidth;
-                          canvas.height = videoElement.videoHeight;
-
-                          context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-                      });
-                      let i = -1;
-                      cardbox.onclick = () => {
-                        if(i<0){
-                          videoElement.play()
-                          i *= -1
-                        }
-                        else{
-                          videoElement.pause()
-                          i *= -1
-                        }
-                      }
-
-                      vidbox.appendChild(videoElement);
-                      cardbox.appendChild(vidbox);
-                      cardbox.appendChild(cardOverlay);
-                      col3.appendChild(cardbox);
-                      videoList.appendChild(col3);
-                    }
+      // Fetch the list of videos from the server
+      fetch('/api/videos')
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              const videos = data.videoFiles || [];
+              const videoInfo = data.videoInfo || [];
+              const title = document.getElementById('title-single');
+              let filePosition = 0;
+              const videoSrc = '<%= video %>';
+              const userSrc = '<%= usersrc %>';
+              
+              for (let i = 0; i < videoInfo.length; i++) {
+                  if (videoSrc === videoInfo[i].name) {
+                      filePosition = i;
+                      break;
                   }
+              }
+              title.textContent = videoInfo[filePosition].title;
+              videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;
+              videoPlayer.play();
+
+              if (videos.length === 0) {
+                  errorMessage.textContent = 'No videos found in the uploads directory.';
+                  return;
+              }
+
+              videos.forEach(video => {
+                  if (video !== videoSrc) {
+                      const parts = video.split('+');
+                      const username = parts[parts.length - 1];
+                      if (username === userSrc) {
+                          const col3 = document.createElement('div');
+                          col3.className = 'col-md-3';
+
+                          const cardbox = document.createElement('div');
+                          cardbox.className = 'card-box-b card-shadow news-box';
+
+                          const vidbox = document.createElement('div');
+                          vidbox.className = 'img-box-b';
+
+                          const cardOverlay = document.createElement('div');
+                          cardOverlay.className = 'card-overlay';
+
+                          const cardHeaderB = document.createElement('div');
+                          cardHeaderB.className = 'card-header-b';
+
+                          const cardCategoryB = document.createElement('div');
+                          cardCategoryB.className = 'card-category-b';
+
+                          const categoryLink = document.createElement('a');
+                          categoryLink.className = 'category-b';
+                          categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
+                          categoryLink.textContent = 'Play';
+                          cardCategoryB.appendChild(categoryLink);
+
+                          const cardTitleB = document.createElement('div');
+                          cardTitleB.className = 'card-title-b';
+
+                          const titleH2 = document.createElement('h2');
+                          titleH2.className = 'title-2';
+
+                          const titleLink = document.createElement('a');
+                          filePosition = videoInfo.findIndex(info => video === info.name);
+                          titleLink.innerHTML = videoInfo[filePosition].title;
+
+                          titleH2.appendChild(titleLink);
+                          cardTitleB.appendChild(titleH2);
+
+                          const cardDate = document.createElement('div');
+                          cardDate.className = 'card-date';
+
+                          const categoryArray = videoInfo[filePosition].category;
+                          const categories = categoryArray.map(cat => numberToCategory[cat]).join(', ');
+
+                          const dateSpan = document.createElement('span');
+                          dateSpan.className = 'date-b';
+                          dateSpan.textContent = categories;
+
+                          cardDate.appendChild(dateSpan);
+
+                          cardHeaderB.appendChild(cardCategoryB);
+                          cardHeaderB.appendChild(cardTitleB);
+                          cardHeaderB.appendChild(cardDate);
+
+                          cardOverlay.appendChild(cardHeaderB);
+
+                          const videoElement = document.createElement('video');
+                          videoElement.src = `/upload_vid_files/uploads/${video}`;
+
+                          const canvas = document.createElement('canvas');
+                          const context = canvas.getContext('2d');
+
+                          videoElement.addEventListener('loadeddata', () => {
+                              canvas.width = videoElement.videoWidth;
+                              canvas.height = videoElement.videoHeight;
+                              context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                          });
+
+                          let i = -1;
+                          cardbox.onclick = () => {
+                              i *= -1;
+                              i < 0 ? videoElement.play() : videoElement.pause();
+                          };
+
+                          vidbox.appendChild(videoElement);
+                          cardbox.appendChild(vidbox);
+                          cardbox.appendChild(cardOverlay);
+                          col3.appendChild(cardbox);
+                          videoList.appendChild(col3);
+                      }
+                  }
+              });
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              errorMessage.textContent = `Error loading videos: ${error.message}`;
+          });
+
+        // Smart contract interaction
+        let contract, accounts;
+        
+        const contractABI = [
+          {
+            "inputs": [
+              {
+                "internalType": "address payable",
+                "name": "recipient",
+                "type": "address"
+              }
+            ],
+            "name": "sendTip",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getBalance",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ];
+
+        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+        const connectWallet = async () => {
+          if (window.ethereum) {
+            try {
+              await window.ethereum.request({ method: 'eth_requestAccounts' });
+              accounts = await ethereum.request({ method: 'eth_accounts' });
+              console.log('Connected account:', accounts[0]);
+                          // Create a provider using ethers.js
+              const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+              // Get the signer (account) to send transactions
+              const signer = provider.getSigner();
+              contract = new ethers.Contract(contractAddress, contractABI, signer);
+              const connectButton = document.getElementById('connect-button');
+              connectButton.textContent = "Connected";
+              const sendButton = document.getElementById('send-button');
+              sendButton.disabled = false;
+              return accounts[0];
+            } catch (error) {
+              console.error("User denied account access", error);
+            }
+          } else {
+            console.error("MetaMask not detected");
+          }
+        }
+
+        document.getElementById('connect-button').addEventListener('click', connectWallet);
+
+        const sendTip = async () => {
+            const amountUSD = document.getElementById('amount-input').value;
+            const amountETH = 0.000418; // Example: 1 ETH = 1500 USD (manually calculated)
+            const amount = (amountUSD * amountETH).toFixed(18);
+            const recipient = '<%= metamask %>'; // Ensure this is replaced correctly
+
+            try {
+                const tx = await contract.sendTip(recipient, {
+                    value: ethers.utils.parseEther(amount) // Pass the value as an object
                 });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessage.textContent = `Error loading videos: ${error.message}`;
-            });
-            let account;
-document.getElementById('connect-button').addEventListener('click', event => {
-  let button = event.target;
-  ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
-    account = accounts[0];
-    console.log(account);
-    button.textContent = account;
-    ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(result => {
-      console.log(result);
-      let wei = parseInt(result, 16); 
-      let balance = wei / (10**18);
-      console.log(balance + " ETH");
-    });
-  });
-});
+                await tx.wait();
+                alert('Tip sent successfully!');
+            } catch (error) {
+                console.error('Error sending tip:', error);
+                alert('Failed to send tip.');
+            }
+        };
 
-document.getElementById('amount-input').addEventListener('input', event => {
-  let amount = event.target.value;
-  let sendButton = document.getElementById('send-button');
-  if (amount && !isNaN(amount) && amount > 0) {
-    sendButton.textContent = `Tip $${amount}`;
-    sendButton.disabled = false;
-  } else {
-    sendButton.textContent = 'Tip the Creator';
-    sendButton.disabled = true;
-  }
-});
-
-document.getElementById('send-button').addEventListener('click', event => {
-  let usdAmount = document.getElementById('amount-input').value;
-  getEthPrice().then(ethPrice => {
-    let ethAmount = usdAmount / ethPrice;
-    let weiValue = BigInt(Math.round(ethAmount * 10**18)).toString(16); // Corrected to use Math.round
-
-    let transactionParam = {
-      to: '<%= metamask %>',
-      from: account,
-      value: '0x' + weiValue
-    };
-
-    ethereum.request({method: 'eth_sendTransaction', params: [transactionParam]}).then(txhash => {
-      console.log(txhash);
-      checkTransactionconfirmation(txhash).then(r => alert(r));
-    });
-  });
-});
-
-function getEthPrice() {
-  return fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
-    .then(response => response.json())
-    .then(data => data.ethereum.usd);
-}
-
-function checkTransactionconfirmation(txhash) {
-  let checkTransactionLoop = () => {
-    return ethereum.request({method:'eth_getTransactionReceipt', params:[txhash]}).then(r => {
-      if (r != null) return 'confirmed';
-      else return checkTransactionLoop();
-    });
-  };
-  return checkTransactionLoop();
-}
-
-let isConnected = false;
-
-document.getElementById("connect-button").addEventListener("click", () => {
-  isConnected = true;
-  alert("Connected!");
-});
-
-document.getElementById("send-button").addEventListener("click", () => {
-  if (!isConnected) {
-    alert("Please connect first.");
-  } else {
-    console.log("Sending data...");
-  }
-});
+        document.getElementById('send-button').addEventListener('click', sendTip);
 
     </script>
 
     <!-- JavaScript Libraries -->
-     <script src="../../back_end\index.js"></script>
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
     <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
     <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
@@ -376,5 +346,7 @@ document.getElementById("send-button").addEventListener("click", () => {
     <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
     <!-- Template Main Javascript File -->
     <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <!-- Smart Contract -->
+    <script src="../../smart_contracts/ignition/modules/Lock.js"></script>
 </body>
 </html>
