@@ -14,6 +14,7 @@
     <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
     <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    
     <title>Video Player</title>
     <style>
         .card-box-b::before {
@@ -97,7 +98,7 @@
                                 <span class="tip-label">Tip $</span>
                                 <input type="number" id="amount-input" value="1" min="1" step="0.5">
                             </div>
-                            <button id="send-button" disabled>
+                            <button id="send-button" onclick="sendTip('<%= metamask %>')" disabled>
                                 Send to <%= username %>
                             </button>
                         </div>
@@ -253,50 +254,12 @@
           });
 
         // Smart contract interaction
-        let contract, accounts;
-        
-        const contractABI = [
-          {
-            "inputs": [
-              {
-                "internalType": "address payable",
-                "name": "recipient",
-                "type": "address"
-              }
-            ],
-            "name": "sendTip",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-          },
-          {
-            "inputs": [],
-            "name": "getBalance",
-            "outputs": [
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          }
-        ];
-
-        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
         const connectWallet = async () => {
           if (window.ethereum) {
             try {
               await window.ethereum.request({ method: 'eth_requestAccounts' });
               accounts = await ethereum.request({ method: 'eth_accounts' });
-              console.log('Connected account:', accounts[0]);
-                          // Create a provider using ethers.js
               const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-              // Get the signer (account) to send transactions
-              const signer = provider.getSigner();
-              contract = new ethers.Contract(contractAddress, contractABI, signer);
               const connectButton = document.getElementById('connect-button');
               connectButton.textContent = "Connected";
               const sendButton = document.getElementById('send-button');
@@ -311,27 +274,7 @@
         }
 
         document.getElementById('connect-button').addEventListener('click', connectWallet);
-
-        const sendTip = async () => {
-            const amountUSD = document.getElementById('amount-input').value;
-            const amountETH = 0.000418; // Example: 1 ETH = 1500 USD (manually calculated)
-            const amount = (amountUSD * amountETH).toFixed(18);
-            const recipient = '<%= metamask %>'; // Ensure this is replaced correctly
-
-            try {
-                const tx = await contract.sendTip(recipient, {
-                    value: ethers.utils.parseEther(amount) // Pass the value as an object
-                });
-                await tx.wait();
-                alert('Tip sent successfully!');
-            } catch (error) {
-                console.error('Error sending tip:', error);
-                alert('Failed to send tip.');
-            }
-        };
-
-        document.getElementById('send-button').addEventListener('click', sendTip);
-
+        
     </script>
 
     <!-- JavaScript Libraries -->

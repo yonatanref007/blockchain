@@ -109,7 +109,7 @@ videoUtils.deleteVideo(app, db);
 apiUtils.getVideoList(app, db);
 apiUtils.getUserList(app, db);
 apiUtils.deleteUserList(app, db);
-
+apiUtils.getContract(app)
 // Admin functionality
 adminUtils.check_profiles(app, db);
 adminUtils.check_videos(app, db);

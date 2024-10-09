@@ -1,37 +1,33 @@
+async function loadContractData() {
+  const response = await fetch('/contract');  // Make sure your server is running and serves this route
+  if (!response.ok) {
+      throw new Error('Failed to load contract data');
+  }
 
-// Connect to MetaMask
+  const data = await response.json();
+  return data;
+}
 
-// Send a deposit to the Lock contract
-async function sendDeposit(amountInEther) {
+async function sendTip(recipientAddress) {
+  const { address: contractAddress, abi: contractABI } = await loadContractData();
+  console.log('Contract Address:', contractAddress);
+  console.log('Contract ABI:', contractABI);
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const lockContract = new ethers.Contract(contractAddress, contractABI, signer);
+  const amountUSD = document.getElementById('amount-input').value;
+  const amountETH = 0.000418;
+  const amount = (amountUSD * amountETH).toFixed(18);
 
-  // Sending ETH to the smart contract
   try {
-    const tx = await lockContract.deposit({
-      value: ethers.utils.parseEther(amountInEther) // Amount in ETH
+    console.log(recipientAddress)
+    const tx = await lockContract.sendTip(recipientAddress, {
+      value: ethers.utils.parseEther(amount)
     });
     console.log('Transaction sent:', tx);
-    await tx.wait(); // Wait for the transaction to be mined
+    await tx.wait();
     console.log('Transaction mined:', tx);
   } catch (error) {
     console.error('Transaction failed:', error);
-  }
-}
-
-// Withdraw funds after unlock time
-async function withdrawFunds() {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  const lockContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-  try {
-    const tx = await lockContract.withdraw();
-    console.log('Withdraw transaction sent:', tx);
-    await tx.wait();
-    console.log('Withdraw transaction mined:', tx);
-  } catch (error) {
-    console.error('Withdrawal failed:', error);
   }
 }

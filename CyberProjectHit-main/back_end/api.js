@@ -75,8 +75,33 @@ const deleteUserList = (app, db) => {
     });
 };
 
+const getContract = (app) => {
+    app.get('/contract', async (req, res) => {
+        try {
+            const Path = path.join(__dirname, '../public/smart_contracts/ignition/modules/contractData.json');
+            fs.readFile(Path, "utf8", (err, data) => {
+                if (err) {
+                    if (err.code === "ENOENT") {
+                        console.error("File not found:", err.path);
+                    } else {
+                        console.error("Error reading file:", err);
+                    }
+                    return res.status(500).send("Error reading contract data.");
+                }
+                res.json(JSON.parse(data));
+            });
+        } catch (err) {
+            console.error('Error:', err);
+            res.status(500).send('Internal Server Error');
+        }
+    });
+};
+
+
+
 module.exports = {
     getVideoList,
     getUserList,
-    deleteUserList
+    deleteUserList,
+    getContract
 };  
