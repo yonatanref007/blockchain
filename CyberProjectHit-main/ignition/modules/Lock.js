@@ -1,37 +1,57 @@
+async function loadContractData() {
+  const response = await fetch('/contract');  // Make sure your server is running and serves this route
+  if (!response.ok) {
+      throw new Error('Failed to load contract data');
+  }
 
-// Connect to MetaMask
+  const data = await response.json();
+  return data;
+}
 
-// Send a deposit to the Lock contract
-async function sendDeposit(amountInEther) {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  const lockContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-  // Sending ETH to the smart contract
+async function getETHPriceInUSD() {
+  const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+  if (!response.ok) {
+    throw new Error('Failed to fetch ETH price');
+  }
+
+  const data = await response.json();
+  return data.ethereum.usd;
+}
+
+async function sendTip(recipientAddress) {
+  const { address: contractAddress, abi: contractABI } = await loadContractData();
+  console.log('Contract Address:', contractAddress);
+  console.log('Contract ABI:', contractABI);
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum); // Connect to the local Hardhat node
+  const signer = provider.getSigner(); // Get the signer
+  const signerAddress = await signer.getAddress(); // Get the signer's address
+
+  const lockContract = new ethers.Contract(contractAddress, contractABI, signer); // Create contract instance
+
+  const amountUSD = document.getElementById('amount-input').value;
+
+  // Fetch the current ETH price in USD
+  const ethPriceInUSD = await getETHPriceInUSD();
+
+  // Convert USD to ETH
+  const amountETH = (amountUSD / ethPriceInUSD).toFixed(18);
+  const testRecipient = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'; // Sample recipient address
+
   try {
-    const tx = await lockContract.deposit({
-      value: ethers.utils.parseEther(amountInEther) // Amount in ETH
+    const nonce = await provider.getTransactionCount(signerAddress, "latest");
+    console.log('Using nonce:', nonce);
+
+    const tx = await lockContract.sendTip(testRecipient, {
+      value: ethers.utils.parseEther(amountETH),
+      nonce: nonce
     });
+
     console.log('Transaction sent:', tx);
-    await tx.wait(); // Wait for the transaction to be mined
+    await tx.wait();
     console.log('Transaction mined:', tx);
   } catch (error) {
     console.error('Transaction failed:', error);
-  }
-}
-
-// Withdraw funds after unlock time
-async function withdrawFunds() {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-  const lockContract = new ethers.Contract(contractAddress, contractABI, signer);
-
-  try {
-    const tx = await lockContract.withdraw();
-    console.log('Withdraw transaction sent:', tx);
-    await tx.wait();
-    console.log('Withdraw transaction mined:', tx);
-  } catch (error) {
-    console.error('Withdrawal failed:', error);
   }
 }

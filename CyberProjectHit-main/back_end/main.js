@@ -2,7 +2,7 @@ const path = require('path'); // Make sure you require the necessary modules
 
 const main = (app) => {
     app.get('/main', (req, res) => {
-        res.render('html/main/main', { username: req.session.username });
+        res.render('html/main/main', { username: req.session.username, admin: req.session.admin});
     });
 };
 

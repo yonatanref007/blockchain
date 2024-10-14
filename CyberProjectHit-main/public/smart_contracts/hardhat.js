@@ -15,10 +15,8 @@ async function main() {
     await checkBalance(deployer.address)
     await checkBalance(recipient.address)
     const tx = await lock.sendTip(recipient.address, { value: tipAmount });
-    await tx.wait();  
+      
     console.log(`Sent ${hre.ethers.utils.formatEther(tipAmount)} ETH to ${recipient.address}`);
-    await checkBalance(deployer.address)
-    await checkBalance(recipient.address)
     const contractData = {
         address: lock.address,
         abi: lockABI
@@ -30,6 +28,7 @@ async function checkBalance(address) {
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
     const balance = await provider.getBalance(address);
     console.log(`Balance of ${address}: ${ethers.utils.formatEther(balance)} ETH`);
+    await tx.wait();
   }
 
 main()

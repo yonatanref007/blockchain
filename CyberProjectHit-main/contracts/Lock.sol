@@ -5,7 +5,6 @@ contract Lock {
     event TipSent(address indexed recipient, uint amount);
 
     constructor() payable {
-        
     }
 
     function sendTip(address payable recipient) external payable {
@@ -16,7 +15,9 @@ contract Lock {
         emit TipSent(recipient, msg.value);
     }
 
+    // Function to check the contract's balance
     function getBalance() public view returns (uint) {
-        return address(this).balance;
+        uint balance = address(this).balance;
+        return balance;
     }
 }
