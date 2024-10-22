@@ -7,23 +7,23 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
 
-    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
 
     <!-- Bootstrap CSS File -->
     <!-- To return to the original css delete the _copy --> 
-    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
 
     <!-- Libraries CSS Files -->
-    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
 
 
     <!-- Main Stylesheet File -->
-    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
     
 </head>
 <body>
@@ -160,23 +160,22 @@
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
 
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
 
       <script>
         document.getElementById('searchForm').addEventListener('click', function(event) {
-          event.preventDefault(); // Prevent the default form submission behavior
-
+          event.preventDefault();
           const name = document.getElementById('Name').value;
           const creator = document.getElementById('Creator').value;
           const type = document.getElementById('Type').value;
@@ -204,12 +203,14 @@
           '5': 'Tech news',
       };
 
+      // Fetch the search part of the url
       function getQueryStringFromUrl(url) {
         const urlObj = new URL(url);
         return urlObj.search;
       }
       const currentUrl = window.location.href;
       const queryString = getQueryStringFromUrl(currentUrl);
+      
       // Fetch the list of videos from the server
       fetch(`/api/videos${queryString}`)
             .then(response => {
@@ -219,14 +220,16 @@
                 return response.json();
             })
             .then(data => {
+              //Check if videos exist
                 const videoFiles = data.videoFiles || []; 
                 const videoInfo = data.videoInfo || [];
                 if (videoFiles.length === 0) {
                     errorMessage.textContent = 'No videos found in the uploads directory.';
                     return;
                 }
-                var filePosition = 0
+                
                 videoFiles.forEach(video => {
+                    var filePosition = 0
                     for(let i = 0; i<videoInfo.length; i++)
                     {
                       if (video === videoInfo[i].name){
@@ -328,17 +331,18 @@
                     }
                     categoryLink.onclick = () => {
                         i = 1
+                        //Opening confirmation button
                         const videoToDelete = document.getElementById('videoToDelete');
                         videoToDelete.textContent = videoInfo[filePosition].title;
 
                         $('#deleteConfirmationModal').modal('show');
-
+                        //Sending delete request to the server
                         document.getElementById('confirmDeleteButton').onclick = async () => {
                             try {
                                 const response = await fetch(`/videos/${videoInfo[filePosition].name}`, {
                                     method: 'DELETE',
                                 });
-
+                                //Checking response
                                 if (!response.ok) {
                                     throw new Error(`Failed to delete video: ${videoInfo[filePosition].name}`);
                                 }

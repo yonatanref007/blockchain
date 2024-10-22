@@ -7,22 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
 
-    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
 
     <!-- Bootstrap CSS File -->
     <!-- To return to the original css delete the _copy --> 
-    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
 
     <!-- Libraries CSS Files -->
-    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
 
     <!-- Main Stylesheet File -->
-    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
     <style>
         .body {
             display: flex;
@@ -197,18 +197,18 @@
     <!--/ News Grid End /-->
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
 
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -220,14 +220,17 @@
 
     uploadButton.addEventListener('click', function(event) {
         event.preventDefault();
+        //check for video input
         if (!fileInput.files.length) {
             alert('Please select a video file.');
             return;
         }
+        //check for title input
         if (titleInput.value.trim()=== '') {
             alert('Please enter a title for the video.');
             return;
         }
+        //check for description input
         if (descriptionInput.value.trim()=== '') {
             alert('Please provide a description.');
             return;
@@ -239,7 +242,7 @@
               selectedCategories += checkbox.value;
           }
         });
-
+        //check for categories max 3
         if (selectedCategories.length === 0) {
             alert('Please select at least one category.');
             return;

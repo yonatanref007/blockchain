@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="stylesheet" href="/css/video-player.css">
-    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="../../smart_contracts/ignition/modules/Lock.js"></script>
 
@@ -140,9 +140,15 @@
               return response.json();
           })
           .then(data => {
+              //Capture the selected video
               const videos = data.videoFiles || [];
               const videoInfo = data.videoInfo || [];
               const title = document.getElementById('title-single');
+              
+              if (videos.length === 0) {
+                  errorMessage.textContent = 'No videos found in the uploads directory.';
+                  return;
+              }
               let filePosition = 0;
               const videoSrc = '<%= video %>';
               const userSrc = '<%= usersrc %>';
@@ -153,15 +159,12 @@
                       break;
                   }
               }
+              //Play the selected video
               title.textContent = videoInfo[filePosition].title;
               videoPlayer.src = `/upload_vid_files/uploads/${videoSrc}`;
               videoPlayer.play();
 
-              if (videos.length === 0) {
-                  errorMessage.textContent = 'No videos found in the uploads directory.';
-                  return;
-              }
-
+              //Put the other videos of the creator in the Available Videos
               videos.forEach(video => {
                   if (video !== videoSrc) {
                       const parts = video.split('+');
@@ -184,7 +187,7 @@
 
                           const cardCategoryB = document.createElement('div');
                           cardCategoryB.className = 'card-category-b';
-
+                          //Puting the link to the video in the play button
                           const categoryLink = document.createElement('a');
                           categoryLink.className = 'category-b';
                           categoryLink.href = `/video-player?video=${encodeURIComponent(video)}&username=${encodeURIComponent(username)}`;
@@ -208,11 +211,9 @@
                           cardDate.className = 'card-date';
 
                           const categoryArray = videoInfo[filePosition].category;
-                          const categories = categoryArray.map(cat => numberToCategory[cat]).join(', ');
+                          
 
                           const dateSpan = document.createElement('span');
-                          dateSpan.className = 'date-b';
-                          dateSpan.textContent = categories;
 
                           cardDate.appendChild(dateSpan);
 
@@ -233,12 +234,18 @@
                               canvas.height = videoElement.videoHeight;
                               context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                           });
-
+                          //Play Pause toggle
                           let i = -1;
                           cardbox.onclick = () => {
-                              i *= -1;
-                              i < 0 ? videoElement.play() : videoElement.pause();
-                          };
+                            if(i>0){
+                              videoElement.play()
+                              i *= -1
+                            }
+                            else{
+                              videoElement.pause()
+                              i *= -1
+                            }
+                          }
 
                           vidbox.appendChild(videoElement);
                           cardbox.appendChild(vidbox);
@@ -254,7 +261,7 @@
               errorMessage.textContent = `Error loading videos: ${error.message}`;
           });
 
-        // Smart contract interaction
+        // Connect to metamask button interaction
         const connectWallet = async () => {
           if (window.ethereum) {
             try {
@@ -279,17 +286,17 @@
     </script>
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
     <!-- Smart Contract -->
     
 </body>

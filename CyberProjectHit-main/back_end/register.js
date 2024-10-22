@@ -7,6 +7,7 @@ const dictionary = fs.readFileSync(config.password.dictionaryPath,'utf8').split(
 
 const getRegisterPage = (app) => {
     app.get('/register', async (req, res) => {
+        //Go to register page
         res.sendFile(path.join(__dirname, '../public/html/credential_related', 'register.html'));
     });
 };
@@ -14,16 +15,18 @@ const getRegisterPage = (app) => {
 
 const postRgister=(app, db)=>{
     app.post('/register', async (req, res) => {
+        c
         const { username, firstname, lastname, email, password, repeatPassword, metamask } = req.body;
         try {
+            //check if fields are missing
             if (!username || !firstname || !lastname || !email || !password || !repeatPassword) {
                 return res.status(400).send('All fields are required');
             }
-    
+            //check if Passwords match
             if (password !== repeatPassword) {
                 return res.status(400).send('Passwords mismatch');
             }
-    
+            //check password complexity
             if (!isPasswordComplex(password)) {
                 return res.status(400).send('Password does not meet complexity requirements');
             }
@@ -39,11 +42,11 @@ const postRgister=(app, db)=>{
             }
     
             const { salt, hash } = hashPassword(password);
-    
+            //Add the new user to the database
             const query = `INSERT INTO users (username, firstname, lastname, email, password, salt, metamask) 
                            VALUES ($1, $2, $3, $4, $5, $6, $7)`;
             await db.query(query, [username, firstname, lastname, email, hash, salt, metamask]);
-    
+            //Add the new password to the password history database
             const passwordHistory = `INSERT INTO passwordhistory (username, password) VALUES ($1, $2)`;
             await db.query(passwordHistory, [username, hash]);
     
@@ -54,7 +57,7 @@ const postRgister=(app, db)=>{
         }
     });
 }
-
+//Password config check
 function isPasswordComplex(password) {
     const { minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecialCharacters, requireDictionaryProtection } = config.password;
     const hasUppercase = /[A-Z]/.test(password);
@@ -71,7 +74,7 @@ function isPasswordComplex(password) {
            (!requireSpecialCharacters || hasSpecial);
 }
 
-// Helper function to hash password with HMAC + Salt
+//hash password with HMAC + Salt
 function hashPassword(password) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.createHmac('sha256', salt).update(password).digest('hex');

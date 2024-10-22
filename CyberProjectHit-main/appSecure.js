@@ -98,6 +98,7 @@ passwordUtils.resetPassword(app, db);
 profileUtils.ProfilePage(app, db);
 profileUtils.editProfilePage(app, db);
 profileUtils.changeProfile(app, db);
+profileUtils.check_videos(app, db);
 
 // File upload and management
 videoUtils.uploadFilesPage(app, db);

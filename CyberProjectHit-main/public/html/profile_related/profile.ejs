@@ -6,23 +6,23 @@
     <title>Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
-    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
 
     <!-- Bootstrap CSS File -->
-    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Libraries CSS Files -->
-    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
 
 
     <!-- Main Stylesheet File -->
-    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
-    <link href="../../profile_css/profile_style.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="../../css/profile_css/profile_style.css" rel="stylesheet">
 </head>
 <body>
     <!-- Nav bar -->
@@ -66,7 +66,7 @@
                 <h2 class="title">Public Profile</h2>
                 <!-- Profile picture -->
                 <div class="flex justify-center mb-4">
-                    <img src=".\main_css\main_body_css\img\default_profile.png" alt="Profile" class="w-32 h-32 rounded-full shadow-md">
+                    <img src=".\css/main_css\main_body_css\img\default_profile.png" alt="Profile" class="w-32 h-32 rounded-full shadow-md">
                 </div>
                 <!-- User info -->
                 <div class="space-y-4">
@@ -79,23 +79,21 @@
                         <p class="border rounded p-2 bg-gray-100"><%= email %></p>
                     </div>
                     <div>
-                        <label class="block font-medium">Joined:</label>
-                        <p class="border rounded p-2 bg-gray-100">January 1, 2023</p>
+                      <label class="block font-medium">Wallet:</label>
+                      <p class="border rounded p-2 bg-gray-100 break-all overflow-wrap-anywhere">
+                          <%= meta %>
+                      </p>
                     </div>
                 </div>
                 <!-- Edit profile button -->
                 <div class="Profile button">
                   <button onclick="gotoEditProfile()" value="Edit Profile">Edit Profile</button>
                 </div>
-                <!-- My courses button -->
-                <div class="Profile button">
-                  <button onclick="gotoMyCourses()" value="View Courses">View Courses</button>
-                </div>
                 <div class="Profile button">
                   <button onclick="gotoUpload()" value="upload Vidoes">Upload File</button>
                 </div>
                 <div class="Profile button">
-                  <button onclick="connectWallet()" value="upload Vidoes">Connect Metamask Wallet</button>
+                  <button onclick="gotoEdit()" value="upload Vidoes">Edit Videos</button>
                 </div>
             </section>
             <br>
@@ -104,44 +102,29 @@
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
 
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
 
 <script>
     function gotoEditProfile() {
             window.location.href = "editprofile";
     }
-    function gotoMyCourses() {
-            window.location.href = "courses";
-    }  
     function gotoUpload() {
             window.location.href = "videos";
     } 
-     
-    function connectWallet(){
-      let button = event.target;
-  ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
-    account = accounts[0];
-    console.log(account);
-    button.textContent = account;
-    ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(result => {
-      console.log(result);
-      let wei = parseInt(result, 16); 
-      let balance = wei / (10**18);
-      console.log(balance + " ETH");
-    });
-  });
-};
+    function gotoEdit() {
+            window.location.href = "check_videos";
+    } 
 </script>
 
 </body>

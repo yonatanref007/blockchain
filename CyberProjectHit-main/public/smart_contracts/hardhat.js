@@ -28,7 +28,6 @@ async function checkBalance(address) {
     const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
     const balance = await provider.getBalance(address);
     console.log(`Balance of ${address}: ${ethers.utils.formatEther(balance)} ETH`);
-    await tx.wait();
   }
 
 main()

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <!-- To return to the original css delete the _copy --> 
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+
+
+    <!-- Main Stylesheet File -->
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    
+</head>
+<body>
+    
+      <!--/ Nav Star /-->
+      <nav class="navbar navbar-default navbar-trans navbar-expand-lg fixed-top">
+        <div class="container">
+          <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault"
+            aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <a class="navbar-brand text-brand" href="/">Cryp<span class="color-b">Video</span></a>
+          <button type="button" class="btn btn-link nav-search navbar-toggle-box-collapse d-md-none" data-toggle="collapse"
+            data-target="#navbarTogglerDemo01" aria-expanded="false">
+            <span class="fa fa-search" aria-hidden="true"></span>
+          </button>
+          <div class="navbar-collapse collapse justify-content-center" id="navbarDefault">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/main">Streams</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/check_profiles">Edit Profiles</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </nav>
+      <!--/ Nav End /-->
+      
+    <!--/ Intro Single star /-->
+        <section class="intro-single">
+            <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-8">
+                <div class="title-single-box">
+                    <h1 class="title-single">Results</h1>
+                </div>
+                </div>
+            </div>
+            </div>
+        </section>
+    <!--/ Intro Single End /-->
+    <div id="errorMessage" style="color: red;"></div>
+    <!--/ News Grid Star /-->
+        <section class="news-grid grid">
+            <div class="container">
+            <div class="row" id="videoList">
+            </div>
+            </div>
+        </section>
+    <!--/ News Grid End /-->
+
+    <!--/ Hidden window /-->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Video</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete <span id="videoToDelete"></span>?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <!-- Contact Form JavaScript File -->
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
+
+    <!-- Template Main Javascript File -->
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
+
+
+    <script>
+      const videoPlayer = document.getElementById('videoPlayer');
+      const videoList = document.getElementById('videoList');
+      const errorMessage = document.getElementById('errorMessage');
+      const numberToCategory = {
+          '1': 'Shopify',
+          '2': 'Day trading',
+          '3': 'Gaming',
+          '4': 'Investing',
+          '5': 'Tech news',
+      };
+      const username = '<%= username %>'; //username from serverside
+      const queryString = `?Creator=${encodeURIComponent(username)}`;
+  
+      console.log("Username:", username);  
+      console.log("QueryString:", queryString);
+      // Fetch the list of videos from the server
+      fetch(`/api/videos${queryString}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+              //check if there are videos
+                const videoFiles = data.videoFiles || []; 
+                const videoInfo = data.videoInfo || [];
+                if (videoFiles.length === 0) {
+                    errorMessage.textContent = 'No videos found in the uploads directory.';
+                    return;
+                }
+                //present the videos
+                videoFiles.forEach(video => {
+                    var filePosition = 0
+                    for(let i = 0; i<videoInfo.length; i++)
+                    {
+                      if (video === videoInfo[i].name){
+                        filePosition = i
+                        break;
+                      }                        
+                    }
+                    const col3 = document.createElement('div');
+                    col3.className = 'col-md-3';
+
+                    const cardbox = document.createElement('div');
+                    cardbox.className = 'card-box-b card-shadow news-box';
+                    
+                    
+                    const vidbox = document.createElement('div');
+                    vidbox.className = 'img-box-b';
+
+                    const cardOverlay = document.createElement('div');
+                    cardOverlay.className = 'card-overlay';
+
+                    const cardHeaderB = document.createElement('div');
+                    cardHeaderB.className = 'card-header-b';
+
+                    const cardCategoryB = document.createElement('div');
+                    cardCategoryB.className = 'card-category-b';
+
+                    const categoryLink = document.createElement('a');
+                    categoryLink.className = 'category-b';
+                    
+
+                    const parts = video.split('+');
+                    const username = parts[parts.length - 1];
+
+                    categoryLink.textContent = 'Delete';
+                    categoryLink.style = "background-color: red;";
+                    categoryLink.href ="#"
+                    cardCategoryB.appendChild(categoryLink);
+                    
+                    
+                    const cardTitleB = document.createElement('div');
+                    cardTitleB.className = 'card-title-b';
+
+                    const titleH2 = document.createElement('h2');
+                    titleH2.className = 'title-2';
+                    const titleLink = document.createElement('a');
+                    titleLink.innerHTML = `${videoInfo[filePosition].title}`;
+
+                    titleH2.appendChild(titleLink);
+                    cardTitleB.appendChild(titleH2);
+
+                    const cardDate = document.createElement('div');
+                    cardDate.className = 'card-date';
+                    
+                    var categories = ''
+                    const categoryArray = videoInfo[filePosition].category
+                    for(let i = 0; i<categoryArray.length; i++)
+                    {
+                      if (i === categoryArray.length-1){
+                        categories += `${numberToCategory[categoryArray[i]]}`
+                        break;
+                      }
+                      else{categories += `${numberToCategory[categoryArray[i]]}, `}
+                    }
+                    const dateSpan = document.createElement('span');
+                    dateSpan.className = 'date-b';
+                    dateSpan.textContent = `${categories}`;
+
+                    cardDate.appendChild(dateSpan);
+
+                    cardHeaderB.appendChild(cardCategoryB);
+                    cardHeaderB.appendChild(cardTitleB);
+                    cardHeaderB.appendChild(cardDate);
+
+                    cardOverlay.appendChild(cardHeaderB);
+
+                    const videoElement = document.createElement('video');
+                    videoElement.src = `/upload_vid_files/uploads/${video}`;
+
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+
+                    videoElement.addEventListener('loadeddata', () => {
+                        canvas.width = videoElement.videoWidth;
+                        canvas.height = videoElement.videoHeight;
+
+                        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+                    });
+                    let i = -1;
+                    cardbox.onclick = () => {
+                      if(i<0){
+                        videoElement.play()
+                        i *= -1
+                      }
+                      else{
+                        videoElement.pause()
+                        i *= -1
+                      }
+                    }
+                    categoryLink.onclick = () => {
+                        i = 1
+                        const videoToDelete = document.getElementById('videoToDelete');
+                        videoToDelete.textContent = videoInfo[filePosition].title;
+
+                        $('#deleteConfirmationModal').modal('show');
+
+                        document.getElementById('confirmDeleteButton').onclick = async () => {
+                            try {
+                                const response = await fetch(`/videos/${videoInfo[filePosition].name}`, {
+                                    method: 'DELETE',
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(`Failed to delete video: ${videoInfo[filePosition].name}`);
+                                }
+                                $('#deleteConfirmationModal').modal('hide');
+                                alert(`Video ${videoInfo[filePosition].title} deleted successfully!`);
+                                location.reload();
+
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert(`Error deleting video: ${error.message}`);
+                            }
+                        };
+                    };
+                    vidbox.appendChild(videoElement);
+                    cardbox.appendChild(vidbox);
+                    cardbox.appendChild(cardOverlay);
+                    col3.appendChild(cardbox);
+                    videoList.appendChild(col3);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = `Error loading videos: ${error.message}`;
+            });
+    </script>
+</body>
+</html>

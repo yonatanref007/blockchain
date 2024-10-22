@@ -6,22 +6,22 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
 
-    <link href="../../main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="../../css/main_css/main_body_css/img/favicon.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link rel="stylesheet" href="/css/video-player.css">
     <!-- Bootstrap CSS File -->
     <!-- To return to the original css delete the _copy --> 
-    <link href="../../main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min_copy.css" rel="stylesheet">
 
     <!-- Libraries CSS Files -->
-    <link href="../../main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="../../main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
 
     <!-- Main Stylesheet File -->
-    <link href="../../main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="../../css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
 
     <!-- bootstrap Stylesheet link -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -134,19 +134,20 @@
       </div>
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
 
     <script>
+      // Fetch the list of non admin users from the server
       fetch('/api/users')
             .then(response => {
                 if (!response.ok) {
@@ -163,10 +164,12 @@
                   const tableRow = document.createElement('tr');
                   tableRow.className = 'align-middle';
                   tableRow.onclick = () => {
+                    //Opening confirmation button
                       const usernameToDelete = document.getElementById('usernameToDelete');
                       usernameToDelete.textContent = user.username;
                       $('#deleteConfirmationModal').modal('show');
                       document.getElementById('confirmDeleteButton').onclick = async () => {
+                        //Sending delete request to the server
                           try {
                               const response = await fetch('/api/users', {
                                   method: 'POST',
@@ -175,6 +178,7 @@
                                   },
                                   body: JSON.stringify({ username: user.username })
                               });
+                              //Checking response
                               if (!response.ok) {
                                   throw new Error(`Failed to delete user: ${user.username}`);
                               }

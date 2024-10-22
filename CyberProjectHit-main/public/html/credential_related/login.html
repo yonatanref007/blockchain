@@ -6,23 +6,23 @@
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
-    <link href="./main_css/main_body_css/img/favicon.png" rel="icon">
+    <link href="./css/main_css/main_body_css/img/favicon.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
 
     <!-- Bootstrap CSS File -->
-    <link href="./main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/main_css/nav_bar_css/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Libraries CSS Files -->
-    <link href="./main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="./main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="./main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="./css/main_css/nav_bar_css/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./css/main_css/nav_bar_css/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="./css/main_css/nav_bar_css/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
 
 
     <!-- Main Stylesheet File -->
-    <link href="./main_css/nav_bar_css/css/style.css" rel="stylesheet">
-    <link href="./register_css/register_style.css" rel="stylesheet">
+    <link href="./css/main_css/nav_bar_css/css/style.css" rel="stylesheet">
+    <link href="./css/register_css/register_style.css" rel="stylesheet">
 </head>
 <body>
     <!-- Nav bar -->
@@ -81,18 +81,18 @@
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/popper/popper.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/easing/easing.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="../../main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/jquery/jquery-migrate.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/popper/popper.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/easing/easing.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="../../css/main_css/nav_bar_css/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Contact Form JavaScript File -->
-    <script src="../../main_css/nav_bar_css/contactform/contactform.js"></script>
+    <script src="../../css/main_css/nav_bar_css/contactform/contactform.js"></script>
 
     <!-- Template Main Javascript File -->
-    <script src="../../main_css/nav_bar_css/js/main.js"></script>
+    <script src="../../css/main_css/nav_bar_css/js/main.js"></script>
 
 <script>
     function gotoForgetPassword() {
@@ -105,13 +105,12 @@
       document.addEventListener('DOMContentLoaded', () => {
           const loginForm = document.getElementById('loginForm');
           const statusMessage = document.getElementById('statusMessage');
-          
+          //Submitting form
           loginForm.addEventListener('submit', async (event) => {
               event.preventDefault(); 
 
               const formData = new URLSearchParams(new FormData(loginForm));
-              
-
+              // Sending form to the server
               try {
                   const response = await fetch('/login', {
                       method: 'POST',
@@ -120,7 +119,7 @@
                       },
                       body: formData
                   });
-          
+                  //Checking server response
                   if (response.ok) {
                     window.location.href = '/main';
                   } else {

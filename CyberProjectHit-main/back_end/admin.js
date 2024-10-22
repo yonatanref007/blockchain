@@ -2,9 +2,11 @@ const path = require('path'); // Make sure you require the necessary modules
 
 const check_profiles = (app, db) => {
     app.get('/check_profiles', async (req, res) => {
+        //Checking if user is registered
         if (!req.session.username) {
             return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
         }
+        //Checking if user is an admin
         if (!req.session.admin) {
             return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
         }
@@ -13,10 +15,12 @@ const check_profiles = (app, db) => {
 };
 
 const check_videos = (app, db) => {
-    app.get('/check_videos', async (req, res) => {
+    app.get('/delete_videos', async (req, res) => {
+        //Checking if user is registered
         if (!req.session.username) {
             return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
         }
+        //Checking if user is an admin
         if (!req.session.admin) {
             return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
         }
