@@ -4,11 +4,11 @@ CrypVideo is a decentralized video sharing platform designed to empower content 
 
 ## Project Overview
 
-CrypVideo provides a decentralized platform where:
+CrypVideo provides a platform where:
 
-Creators can upload and manage videos securely on IPFS (InterPlanetary File System).
+Creators can upload and manage videos.
 Viewers can discover, view, and tip creators using Ethereum-based smart contracts.
-This project promotes fair monetization, secure content storage, and enhanced user privacy through blockchain technology.
+This project promotes fair monetization, and enhanced user privacy through blockchain technology.
 
 ## Features
 
@@ -49,6 +49,22 @@ npm install
 3.**Set Up Metamask:**
 
 Add MetaMask to your browser, and configure it to connect to a local Ethereum network (e.g., localhost:8545) to interact with your Hardhat node.
+
+4.**Configure Environment Variables:**
+
+Create a .env file in the project root to store sensitive configurations, such as API keys or private keys, required by the application.
+
+### Connecting to PostgreSQL with pgAdmin
+
+1. **Open pgAdmin** and navigate to **"Add New Server"**.
+2. In the **"General"** tab, provide any name for the server.
+3. In the **"Connection"** tab, paste the following details:
+   - **Hostname:** `autorack.proxy.rlwy.net`
+   - **Port:** `44177`
+   - **Username:** `postgres`
+   - **Password:** `wcIioPscrEuExGVPwbToCJFAIHyBkFQG`
+   - **Database:** `railway`
+4. Click **Save** to connect.
 
 ## Running the Project
 To run the CrypVideo platform locally:
