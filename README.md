@@ -50,10 +50,6 @@ npm install
 
 Add MetaMask to your browser, and configure it to connect to a local Ethereum network (e.g., localhost:8545) to interact with your Hardhat node.
 
-4.**Configure Environment Variables:**
-
-Create a .env file in the project root to store sensitive configurations, such as API keys or private keys, required by the application.
-
 ## Running the Project
 To run the CrypVideo platform locally:
 
