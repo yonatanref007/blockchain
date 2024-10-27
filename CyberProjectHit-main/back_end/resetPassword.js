@@ -81,6 +81,9 @@ const resetPassword = (app, db) => {
             if (newPassword !== repeatPassword) {
                 return res.status(400).send('Passwords do not match');
             }
+            if (!isPasswordComplex(newPassword)) {
+                return res.status(400).send('Password does not meet complexity requirements');
+            }
             //Check if token is expired / doesnt exist
             const hash = crypto.createHash('sha1').update(token).digest('hex');
             const result = await db.query("SELECT username, reset_token_expiry, salt FROM users WHERE reset_token = $1", [hash]);
@@ -127,6 +130,23 @@ const resetPassword = (app, db) => {
         }
     });
 };
+
+//Password config check
+function isPasswordComplex(password) {
+    const { minLength, requireUppercase, requireLowercase, requireNumbers, requireSpecialCharacters, requireDictionaryProtection } = config.password;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const existInDictionary = !dictionary.includes(password);
+
+    return password.length >= minLength &&
+           (!requireUppercase || hasUppercase) &&
+           (!requireLowercase || hasLowercase) &&
+           (!requireNumbers || hasNumbers) &&
+           (!requireDictionaryProtection || existInDictionary) &&
+           (!requireSpecialCharacters || hasSpecial);
+}
 
 module.exports = {
     getForgotPassPage,

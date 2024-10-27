@@ -20,7 +20,7 @@ CREATE TABLE video (
     username VARCHAR(100) NOT NULL,
     name VARCHAR(100),
     title VARCHAR(100),
-    description VARCHAR(100),
+    description VARCHAR(500),
     category VARCHAR(6)
 );
 

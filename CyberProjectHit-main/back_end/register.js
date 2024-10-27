@@ -15,7 +15,6 @@ const getRegisterPage = (app) => {
 
 const postRgister=(app, db)=>{
     app.post('/register', async (req, res) => {
-        c
         const { username, firstname, lastname, email, password, repeatPassword, metamask } = req.body;
         try {
             //check if fields are missing

@@ -20,11 +20,10 @@ async function getETHPriceInUSD() {
 }
 
 async function sendTip(recipientAddress) {
+  //Get contract adress and abi
   const { address: contractAddress, abi: contractABI } = await loadContractData();
-  console.log('Contract Address:', contractAddress);
-  console.log('Contract ABI:', contractABI);
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum); // Connect to the local Hardhat node
+  const provider = new ethers.providers.Web3Provider(window.ethereum); // Connect to the local metamask
   const signer = provider.getSigner(); // Get the signer
   const signerAddress = await signer.getAddress(); // Get the signer's address
 
@@ -38,7 +37,7 @@ async function sendTip(recipientAddress) {
   // Convert USD to ETH
   const amountETH = (amountUSD / ethPriceInUSD).toFixed(18);
   const testRecipient = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'; // Sample recipient address
-
+  //This is a test account to change so it will work for every user switch signerAddress with recipientAddress
   try {
     const nonce = await provider.getTransactionCount(signerAddress, "latest");
     console.log('Using nonce:', nonce);

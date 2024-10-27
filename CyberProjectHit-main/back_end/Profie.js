@@ -47,6 +47,15 @@ const editProfilePage = (app) => {
     });
 };
 
+const check_videos = (app, db) => {
+    app.get('/check_videos', async (req, res) => {
+        //Go to videos of user
+        if (!req.session.username) {
+            return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
+        }
+        res.render('html/profile_related/video_delete_profile',{ username: req.session.username });
+    });
+};
 
 const changeProfile=(app, db)=>{
     app.post('/editprofile', async (req, res) => {
@@ -128,15 +137,7 @@ const changeProfile=(app, db)=>{
         }
     });
 }
-const check_videos = (app, db) => {
-    app.get('/check_videos', async (req, res) => {
-        //Go to videos of user
-        if (!req.session.username) {
-            return res.sendFile(path.join(__dirname, '../public/html/main', 'error.html'));
-        }
-        res.render('html/profile_related/video_delete_profile',{ username: req.session.username });
-    });
-};
+
 
 module.exports = {
     ProfilePage,
