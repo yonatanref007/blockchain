@@ -6,7 +6,7 @@ CrypVideo is a decentralized video sharing platform designed to empower content 
 
 CrypVideo provides a decentralized platform where:
 
-Creators can upload and manage videos securely on IPFS (InterPlanetary File System).
+Creators can upload and manage videos securely.
 Viewers can discover, view, and tip creators using Ethereum-based smart contracts.
 This project promotes fair monetization, secure content storage, and enhanced user privacy through blockchain technology.
 
