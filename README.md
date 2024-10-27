@@ -12,8 +12,6 @@ This project promotes fair monetization, secure content storage, and enhanced us
 
 ## Features
 
-**Decentralized Storage:** All video content is stored on IPFS for censorship resistance and security.
-
 **Ethereum Tipping System:** Enables fair and transparent tipping using smart contracts and MetaMask integration.
 
 **User Profiles:** Customizable profiles for content creators and viewers.
@@ -63,6 +61,9 @@ To run the CrypVideo platform locally:
 
 Navigate to the project location and in the terminal, run:
 ```bash
+cd CyberProjectHit-main/
+```
+```bash
 npx hardhat node
 ```
 2.**Compile and Deploy Contracts:**
@@ -81,7 +82,7 @@ npm start
 ```
 4.**Access the Platform:**
 
-Open your browser and navigate to http://localhost:3000 (/3002).
+Open your browser and navigate to http localhost route the code is on (https if secured).
 
 You should now see CrypVideo running locally. Use your MetaMask wallet to interact with the tipping features and test various functionalities.
 
@@ -91,59 +92,69 @@ To run CrypVideo over HTTPS on your local environment:
 
 1.**Generate SSL Certificates:**
 
-Create a self-signed SSL certificate and key. You can use OpenSSL:
-```bash
-openssl req -nodes -new -x509 -keyout key.pem -out certificate.crt
-```
-Store key.pem and certificate.crt files in a secure location within the project.
+Copy the certificate file that is in the code repository:
 
-2.**Modify Server Configuration for HTTPS and Session Management:**
+2.**Upload the certificate to your trusted files in the computer:**
 
-Update the server code as follows to enable HTTPS and configure secure session management:
-```javascript
-const fs = require('fs');
-const https = require('https');
-const express = require('express');
-const session = require('express-session');
-const crypto = require('crypto');
-const bodyParser = require('body-parser');
-const path = require('path');
+### Steps (Windows)
 
-const privateKey = fs.readFileSync('./key.pem', 'utf8');
-const certificate = fs.readFileSync('./certificate.crt', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
+1. **Open the Microsoft Management Console (MMC):**
+   - Press `Win + R` to open the **Run** dialog.
+   - Type `mmc` and press **Enter** to open the console.
 
-const app = express();
+2. **Add the Certificates Snap-in:**
+   - In the MMC window, go to **File > Add/Remove Snap-in…**.
+   - In the **Available snap-ins** list, find and select **Certificates**, then click **Add**.
+   - Choose **Computer account** (this applies the certificate system-wide), and click **Next**.
+   - Select **Local computer** and click **Finish**.
 
-// Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+3. **Navigate to Trusted Root Certification Authorities:**
+   - In the left sidebar, expand **Certificates (Local Computer)**.
+   - Expand **Trusted Root Certification Authorities** and select **Certificates**.
 
-// Setup session management
-const secretKey = crypto.randomBytes(128).toString('hex');
-app.use(session({
-    secret: secretKey,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: true,
-        httpOnly: true, 
-        maxAge: 3600000 
-    }
-}));
+4. **Import the Certificate:**
+   - Right-click on **Certificates** under **Trusted Root Certification Authorities**, go to **All Tasks**, and select **Import…**.
+   - This will start the **Certificate Import Wizard**.
 
-// Start HTTPS server
-https.createServer(credentials, app).listen(3000, () => {
-    console.log("Server running at https://localhost:3000");
-});
-```
+5. **Choose the Certificate File:**
+   - In the wizard, click **Browse…** and navigate to the location of your certificate file.
+   - Select the certificate and click **Open**. Then, click **Next**.
 
-3.**Update Browser Settings:**
+6. **Place the Certificate in the Trusted Root Certification Authorities Store:**
+   - Ensure that **Place all certificates in the following store** is selected, and it shows **Trusted Root Certification Authorities**.
+   - Click **Next** and then **Finish** to complete the import.
 
-Since this is a self-signed certificate, your browser may warn you about the connection’s security. Approve the connection to proceed.
+7. **Confirm the Certificate Import:**
+   - You should see a confirmation message stating the import was successful.
+   - Close the MMC by going to **File > Exit**. If prompted to save the console settings, you can choose not to save.
 
+8. **Restart Your Browser:**
+   - Restart your browser to make sure it recognizes the newly trusted certificate.
 
+### Steps (MAC)
+
+1. **Open Keychain Access:**
+   - Press `Command + Space` to open **Spotlight Search**.
+   - Type `Keychain Access` and press **Enter** to launch the application.
+
+2. **Import the Certificate:**
+   - In **Keychain Access**, go to the **File** menu and select **Import Items…**.
+   - Navigate to the location of your certificate file (e.g., `certificate.crt`).
+   - Select the certificate file and click **Open**.
+
+3. **Select Keychain:**
+   - When prompted, choose **System** or **Login** as the keychain to import the certificate.
+   - Click **Add** to import the certificate.
+
+4. **Set the Certificate to Always Trust:**
+   - Locate the imported certificate in the **Keychain Access** window.
+   - Double-click the certificate to open its details.
+   - Expand the **Trust** section.
+   - Set **When using this certificate:** to **Always Trust**.
+   - Close the certificate details window. You may be prompted to enter your password to confirm the changes.
+
+5. **Restart Your Browser:**
+   - Restart your browser to make sure it recognizes the newly trusted certificate.
 
 ## Smart Contracts
 The platform’s core tipping functionality is enabled by Ethereum smart contracts, ensuring secure and transparent transactions. These contracts handle the USD-to-ETH conversion, tipping, and content ownership verification. Contracts are written in Solidity and deployed through Hardhat.
@@ -151,4 +162,3 @@ The platform’s core tipping functionality is enabled by Ethereum smart contrac
 ## Contributing
 
 We welcome contributions to CrypVideo! Please submit a pull request or open an issue to discuss potential changes. Ensure code is well-documented and tested before submission.
-
